@@ -1,5 +1,5 @@
-var SuiviMed = artifacts.require("./SuiviMed.sol");
+var SuiviMedControlCenter = artifacts.require("./SuiviMedControlCenter.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(SuiviMed);
+  deployer.deploy(SuiviMedControlCenter);
 };
