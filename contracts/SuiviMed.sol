@@ -170,5 +170,5 @@ contract SuiviMed is AccessControl {
         return patients[_patientID].dataCID;
     }
 
-
+  
 }
