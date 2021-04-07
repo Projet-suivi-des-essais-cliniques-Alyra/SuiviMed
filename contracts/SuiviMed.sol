@@ -2,9 +2,15 @@
 pragma solidity 0.8.0;
 pragma abicoder v2;
 
-// import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract SuiviMed {
+contract SuiviMed is AccessControl {
+    
+    bytes32 public constant AUTHORITY = keccak256("AUTHORITY");
+    bytes32 public constant ADMINSAUTHORITY = keccak256("ADMINSAUTHORITY");
+    bytes32 public constant PROMOTER = keccak256("PROMOTER");
+    bytes32 public constant ADMINSPROMOTER = keccak256("ADMINSPROMOTER");
+    
     struct Promoter {
         uint256 protocolID;
         address promoterAddress;
@@ -23,7 +29,7 @@ contract SuiviMed {
     struct Patient {
         address patientAddress;
         uint256 investigatorID;
-        string dataCID;
+        string[] dataCID;
         string nameCID;
         bool consent;
     }
@@ -50,17 +56,23 @@ contract SuiviMed {
 
     event projectCreation(uint256 _projectID);
     event projectValidation(uint256 _projectID);
-
-    //enum Status {PENDING, SUSPENDED, ACTIVE, COMPLETED}
-
-    // address[2] public authorities = [
-    //     0xe5AF13a5E443287f8c8190A6C168983abDbe9E96,
-    //     0x7625d6c5Af7B0a164514643f03e82347D2A121E3
-    // ];
-    // address[2] public promoters = [
-    //     0x3635fc0ED49288237dd0bebA412e12A91Ac52471,
-    //     0x194454F5CcD670C9a3f32ab0d065b0E475F9Ef57
-    // ];
+    
+    constructor (address root,address _addressPromoter,address _addressAuthority)
+    {
+        // @dev Add `root` to the admin role as a member.
+        _setupRole(DEFAULT_ADMIN_ROLE,root);
+        // @dev Set ADMINSPROMOTER as Admins of PROMOTER
+        _setRoleAdmin(ADMINSPROMOTER, DEFAULT_ADMIN_ROLE);
+        _setRoleAdmin(PROMOTER,ADMINSPROMOTER);
+        // @dev Set ADMINSAUTHORITY as Admins of AUTHORITY
+        _setRoleAdmin(ADMINSAUTHORITY, DEFAULT_ADMIN_ROLE);
+        _setRoleAdmin(AUTHORITY,ADMINSAUTHORITY);
+        // @dev Set first admins addresses for Authorities and Promoters
+        _setupRole(ADMINSAUTHORITY,_addressAuthority);
+        _setupRole(ADMINSPROMOTER,_addressPromoter);
+        // @dev root renounces its admin priviledge
+        renounceRole(DEFAULT_ADMIN_ROLE,root);
+    }
 
     function createProtocol(
         uint _promoterID,
@@ -76,7 +88,9 @@ contract SuiviMed {
     function addPromoter(address _addressPromoter) public {
         // require(hasRole("ADMIN", msg.sender), "You are not admin!");
         // grantRole("PROMOTER", _addressPromoter);
+        grantRole(PROMOTER,_addressPromoter);
         promoters.push(Promoter(0, _addressPromoter));
+        
     }
     
     function createProject(
@@ -107,10 +121,17 @@ contract SuiviMed {
         string memory _nameCID
     ) public {
         //  require(hasRole("INVESTIGATOR", msg.sender), "You are not investigator!");
-
-        patients.push(
-            Patient(_patientAddress, _investigatorID, _dataCID, _nameCID, true)
-        );
+        Patient memory _patient;
+        
+        _patient.patientAddress = _patientAddress;
+        _patient.investigatorID = _investigatorID;
+        _patient.nameCID = _nameCID;
+        _patient.consent = true;
+       
+        patients.push(_patient);
+        
+        patients[patients.length -1].dataCID.push(_dataCID);
+        
     }
 
     function revokeConsent(uint256 _patientID) public {
@@ -122,14 +143,18 @@ contract SuiviMed {
     }
 
     function collectData(uint256 _patientID,string memory _newDataCID) public {
-        require(
-            investigators[patients[_patientID].investigatorID]
-                .investigaterAddress == msg.sender,
-            "You are not authorized to access this patient's data!"
-        );
-        patients[_patientID].dataCID = _newDataCID;
+        // require(
+        //     investigators[patients[_patientID].investigatorID]
+        //         .investigaterAddress == msg.sender,
+        //     "You are not authorized to access this patient's data!"
+        // );
+        //@dev to keep historic of dataCID in the blockchain
+        patients[_patientID].dataCID.push(_newDataCID);
     }
 
+    function getPatientDataCID(uint256 _patientID) view public returns (string[] memory) {
+        return patients[_patientID].dataCID;
+    }
 
 
 
