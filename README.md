@@ -1,4 +1,4 @@
-# SuiviMed
+# Suivi des essais cliniques
 
 This is a working branch
 
