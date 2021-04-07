@@ -10,6 +10,7 @@ contract SuiviMed is AccessControl {
     bytes32 public constant ADMINSAUTHORITY = keccak256("ADMINSAUTHORITY");
     bytes32 public constant PROMOTER = keccak256("PROMOTER");
     bytes32 public constant ADMINSPROMOTER = keccak256("ADMINSPROMOTER");
+    bytes32 public constant INVESTIGATOR = keccak256("INVESTIGATOR");
     
     struct Promoter {
         uint256 protocolID;
@@ -17,7 +18,7 @@ contract SuiviMed is AccessControl {
     }
 
     struct Authority {
-        uint256[] protocolsIDs;
+        uint256[] projectsIDs;
         address authorityAddress;
     }
 
@@ -53,10 +54,11 @@ contract SuiviMed is AccessControl {
     Investigator[] public investigators;
     Project[] public projects;
     Patient[] public patients;
+    Authority[] public authorities;
 
     event projectCreation(uint256 _projectID);
     event projectValidation(uint256 _projectID);
-    
+
     constructor (address root,address _addressPromoter,address _addressAuthority)
     {
         // @dev Add `root` to the admin role as a member.
@@ -64,6 +66,7 @@ contract SuiviMed is AccessControl {
         // @dev Set ADMINSPROMOTER as Admins of PROMOTER
         _setRoleAdmin(ADMINSPROMOTER, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(PROMOTER,ADMINSPROMOTER);
+        _setRoleAdmin(INVESTIGATOR,PROMOTER);
         // @dev Set ADMINSAUTHORITY as Admins of AUTHORITY
         _setRoleAdmin(ADMINSAUTHORITY, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(AUTHORITY,ADMINSAUTHORITY);
@@ -84,13 +87,22 @@ contract SuiviMed is AccessControl {
             Protocol(_promoterID,_descriptionCID, _treatmentsListCID, block.timestamp)
         );
     }
-
+    
     function addPromoter(address _addressPromoter) public {
-        // require(hasRole("ADMIN", msg.sender), "You are not admin!");
-        // grantRole("PROMOTER", _addressPromoter);
+        require(hasRole(ADMINSPROMOTER, msg.sender), "You are not Promoter Admin!");
         grantRole(PROMOTER,_addressPromoter);
-        promoters.push(Promoter(0, _addressPromoter));
-        
+        Promoter memory promoter;
+        promoter.promoterAddress = _addressPromoter;
+        promoters.push(promoter); 
+    }
+   
+    function addAuthority(address _addressAuthority) public {
+        require(hasRole(ADMINSAUTHORITY, msg.sender), "You are not Authority Admin!");
+        // grantRole("PROMOTER", _addressPromoter);
+        grantRole(AUTHORITY,_addressAuthority);
+        Authority memory authority;
+        authority.authorityAddress = _addressAuthority;
+        authorities.push(authority);
     }
     
     function createProject(
@@ -98,7 +110,9 @@ contract SuiviMed is AccessControl {
         uint256 _promoterID,
         address _investigatorAddress
     ) public {
+        require(hasRole(PROMOTER, msg.sender), "You are not Promoter!");
         investigators.push(Investigator(_protocolID,_investigatorAddress));
+        grantRole(INVESTIGATOR,_investigatorAddress);
         projects.push(
             Project(false, _protocolID, _promoterID, investigators.length-1)
         );
@@ -107,10 +121,10 @@ contract SuiviMed is AccessControl {
         emit projectCreation(projectID);
     }
 
-    function validateProject(uint256 _projectID) public {
-        //  require(hasRole("AUTHORITY", msg.sender), "You are not authority!");
+    function validateProject(uint256 _projectID,uint _authorityID) public {
+        require(hasRole(AUTHORITY, msg.sender), "You are not authority!");
         projects[_projectID].validated = true;
-
+        authorities[_authorityID].projectsIDs.push(_projectID);
         emit projectValidation(_projectID);
     }
 
@@ -120,7 +134,7 @@ contract SuiviMed is AccessControl {
         string memory _dataCID,
         string memory _nameCID
     ) public {
-        //  require(hasRole("INVESTIGATOR", msg.sender), "You are not investigator!");
+        require(hasRole(INVESTIGATOR, msg.sender), "You are not investigator!");
         Patient memory _patient;
         
         _patient.patientAddress = _patientAddress;
@@ -143,11 +157,11 @@ contract SuiviMed is AccessControl {
     }
 
     function collectData(uint256 _patientID,string memory _newDataCID) public {
-        // require(
-        //     investigators[patients[_patientID].investigatorID]
-        //         .investigaterAddress == msg.sender,
-        //     "You are not authorized to access this patient's data!"
-        // );
+        require(
+            investigators[patients[_patientID].investigatorID]
+                .investigaterAddress == msg.sender,
+            "You are not authorized to access this patient's data!"
+        );
         //@dev to keep historic of dataCID in the blockchain
         patients[_patientID].dataCID.push(_newDataCID);
     }
@@ -157,66 +171,4 @@ contract SuiviMed is AccessControl {
     }
 
 
-
-
-
-
-
-
-    /*     function createTestCenter(uint _protocolID,,uint[] memory _investigatorsIDs) public {
-        // require(hasRole("PROMOTER", msg.sender),"You are not promoter!");
-        testCenters.push(TestCenter(_protocolID,_promotersIDs,_investigatorsIDs));
-        
-        
-        for (uint index = 1; index < _investigatorsIDs.length; index++) {
-            investigators[_investigatorsIDs[index]].protocols.push(_protocolID);
-        }
-    } */
-
-    // //addresses that can interact with SuiviMed
-    // mapping(address => admin) public whitelist;
-
-    // //
-    // struct Admin{
-    //     bytes32 role; //role = promoteur, autorite, investigateur
-    //     bytes32 protocole;
-    // }
-
-    // struct Patient{
-    //     address addr;
-    //     bool consent;
-    //     bytes32 dataCID;
-    // }
-
-    // //definition de l'administrateurs
-    // constructor () {
-    //     whitelist[msg.sender] = true;
-    // }
-
-    // function consent() {
-    // }
-
-    // function revokeConsent(){
-    // }
-
-    // function collectData() {
-    // }
-
-    // function readData(){
-    // }
-
-    // function uploadToIPFS() {
-    // }
-
-    // function encryptData() {
-    // }
-
-    // function decryptData() {
-    // }
-
-    // function retrieveDataFromIPFS () {
-    // }
-
-    // function destroyDataAccess() {
-    // }
 }
