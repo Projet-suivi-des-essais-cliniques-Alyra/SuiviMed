@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract SuiviMed is AccessControl {
     
+    // @dev 
     bytes32 public constant AUTHORITY = keccak256("AUTHORITY");
     bytes32 public constant AUTHORITYADMIN = keccak256("AUTHORITYADMIN");
     bytes32 public constant PROMOTER = keccak256("PROMOTER");
@@ -38,11 +39,11 @@ contract SuiviMed is AccessControl {
 
     struct Protocol {
         bool validated;
+        bool alertOn;
+        uint256 date;
         uint promoterID;
         string descriptionCID;
         string treatmentsListCID;
-        bool alertOn;
-        uint256 date;
     }
 
     struct Project {
@@ -60,7 +61,7 @@ contract SuiviMed is AccessControl {
     // @dev for multisig agreement on resuming clinical trials
     mapping(address=>bool) agreedOnResume;
     
-    
+    // @notice ces tableaux enregistrent les infos des projets ainsi que leurs participants sur la blockchain
     Protocol[] public protocols;
     Promoter[] public promoters;
     Investigator[] public investigators;
@@ -68,11 +69,25 @@ contract SuiviMed is AccessControl {
     Patient[] public patients;
     Authority[] public authorities;
 
-    event projectCreation(uint256 _projectID);
-    event protocolValidation(uint256 _protocolID);
+    // @notice The events are broadcasting alerts and infos, 
+    // @notice and allow tracking smart contract interactions
+    event promoterAdded(address _addressPromoter);
+    event authorityAdded(address _addressAuthority);
+    event protocolCreation(uint _promoterID,uint _protocolID);
+    event projectCreation(uint256 _projectID,uint _protocolID);
+    event investigatorAdded(address _investigatorAddress);
+    event protocolValidation(uint256 _protocolID, uint _authorityID);
+    event patientAdded(uint _patientID,uint _projectID);
+    event consentRevoked(uint _patientID);
+    event newConsent(uint _patientID);
+    event dataCollected(uint _patientID);
     event alert(uint _patientID,uint _projectID);
+    event agreedOnResumeEvent(uint _protocolID,address _personAgreeing);
+    event resumedAfterAlert(uint _protocolID);
     event protocolUpdated(uint _protocolID);
 
+    // @dev the constructor creates the admins of promoters and authorities
+    // @dev using addresses provided to the root of the client promoter and of an authority 
     constructor (address root,address _addressPromoter,address _addressAuthority)
     {
         // @dev Add `root` to the admin role as a member.
@@ -92,6 +107,7 @@ contract SuiviMed is AccessControl {
         renounceRole(DEFAULT_ADMIN_ROLE,root);
     }
 
+    // @notice promoters can create new protocols with this function
     function createProtocol(
         uint _promoterID,
         string memory _descriptionCID,
@@ -99,8 +115,10 @@ contract SuiviMed is AccessControl {
     ) public {
         require(hasRole(PROMOTER, msg.sender),"You are not promoter!");
         protocols.push(
-            Protocol(false,_promoterID,_descriptionCID, _treatmentsListCID, false, block.timestamp)
+            Protocol(false,false, block.timestamp,_promoterID,_descriptionCID, _treatmentsListCID)
         );
+        uint _protocolID=protocols.length-1;
+        emit protocolCreation(_promoterID,_protocolID);
     }
     
     function addPromoter(address _addressPromoter) public {
@@ -109,6 +127,7 @@ contract SuiviMed is AccessControl {
         Promoter memory promoter;
         promoter.promoterAddress = _addressPromoter;
         promoters.push(promoter); 
+        emit promoterAdded(_addressPromoter);
     }
    
     function addAuthority(address _addressAuthority) public {
@@ -117,6 +136,7 @@ contract SuiviMed is AccessControl {
         Authority memory authority;
         authority.authorityAddress = _addressAuthority;
         authorities.push(authority);
+        emit authorityAdded(_addressAuthority);
     }
     
     function createProject(
@@ -128,13 +148,13 @@ contract SuiviMed is AccessControl {
         require(protocols[_protocolID].validated = true,"This protocol has not been validated!");
         investigators.push(Investigator(_protocolID,_investigatorAddress));
         grantRole(INVESTIGATOR,_investigatorAddress);
+        emit investigatorAdded(_investigatorAddress);
         projects.push(
             Project(_protocolID, _promoterID, investigators.length-1)
         );
-        uint256 projectID = projects.length - 1;
-        protocolIDToProjectID[_protocolID]=projectID;
-
-        emit projectCreation(projectID);
+        uint256 _projectID = projects.length - 1;
+        protocolIDToProjectID[_protocolID]=_projectID;
+        emit projectCreation(_projectID,_protocolID);
     }
 
     function validateProtocol(uint256 _protocolID,uint _authorityID) public {
@@ -142,7 +162,7 @@ contract SuiviMed is AccessControl {
         protocols[_protocolID].validated = true;
         validatedProtocolByAuthority[_protocolID] = authorities[_authorityID].authorityAddress;
         authorities[_authorityID].protocolsIDs.push(_protocolID); //may be removed ...???
-        emit protocolValidation(_protocolID);
+        emit protocolValidation(_protocolID,_authorityID);
     }
     
     function updateProtocol(uint _protocolID,string memory _newDescriptionCID,string memory _newTreatmentsListCID) public {
@@ -156,7 +176,6 @@ contract SuiviMed is AccessControl {
         emit protocolUpdated(_protocolID);
     }
     
-
     function addPatient(
         address _patientAddress,
         uint256 _investigatorID,
@@ -167,21 +186,26 @@ contract SuiviMed is AccessControl {
         require(hasRole(INVESTIGATOR, msg.sender), "You are not investigator!");
         //@notice prevents adding patients for the study if protocol has an alert on
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
-        
         Patient memory _patient;
-        
         _patient.patientAddress = _patientAddress;
         _patient.investigatorID = _investigatorID;
         _patient.projectID = _projectID;
         _patient.nameCID = _nameCID;
         _patient.consent = true;
-       
         patients.push(_patient);
-        
-        patients[patients.length -1].dataCID.push(_dataCID);
-        
-        projectIDToPatientsIDs[_projectID].push(patients.length -1);
-        
+        uint _patientID= patients.length -1;
+        patients[_patientID].dataCID.push(_dataCID);
+        projectIDToPatientsIDs[_projectID].push(_patientID);
+        emit patientAdded(_patientID,_projectID);
+    }
+    
+    function consent(uint256 _patientID) public {
+        require(
+            patients[_patientID].patientAddress == msg.sender,
+            "you are not authorized to do that!"
+        );
+        patients[_patientID].consent = true;
+        emit newConsent(_patientID);
     }
 
     function revokeConsent(uint256 _patientID) public {
@@ -190,6 +214,7 @@ contract SuiviMed is AccessControl {
             "you are not authorized to do that!"
         );
         patients[_patientID].consent = false;
+        emit consentRevoked(_patientID);
     }
 
     function collectData(uint256 _patientID,string memory _newDataCID) public {
@@ -203,6 +228,7 @@ contract SuiviMed is AccessControl {
         require(protocols[patients[_patientID].projectID].alertOn==false);
         //@dev to keep historic of dataCID in the blockchain
         patients[_patientID].dataCID.push(_newDataCID);
+        emit dataCollected(_patientID);
     }
 
     function getPatientDataCID(uint256 _patientID) view public returns (string[] memory) {
@@ -219,19 +245,21 @@ contract SuiviMed is AccessControl {
         emit alert(_patientID,_protocolID);
     }
     
+    // @notice this function collects agreement of promoters and authorities to resume clinical trials
     function agreeOnResume(uint _protocolID) public {
         require (msg.sender == promoters[protocols[_protocolID].promoterID].promoterAddress || msg.sender==validatedProtocolByAuthority[_protocolID]);
         require (agreedOnResume[msg.sender] == false);
         agreedOnResume[msg.sender] = true;
+        emit agreedOnResumeEvent(_protocolID,msg.sender);
     }
     
-    
+    // @notice this function allow resuming clinical trials with agreement of promoters and authorities
     function resumeAfterAlert(uint _protocolID) public {
         require (agreedOnResume[promoters[protocols[_protocolID].promoterID].promoterAddress] == true && agreedOnResume[validatedProtocolByAuthority[_protocolID]] == true);
         protocols[_protocolID].alertOn = false;
         agreedOnResume[promoters[protocols[_protocolID].promoterID].promoterAddress] = false;
         agreedOnResume[validatedProtocolByAuthority[_protocolID]] = false;
-        
+        emit resumedAfterAlert(_protocolID);
     }
 
 }
