@@ -122,7 +122,7 @@ contract SuiviMed is AccessControl {
     }
     
     function addPromoter(address _addressPromoter) public {
-        require(hasRole(PROMOTERADMIN, msg.sender), "You are not Promoter Admin!");
+        require(hasRole(PROMOTERADMIN, msg.sender),"You are not Promoter Admin!");
         grantRole(PROMOTER,_addressPromoter);
         Promoter memory promoter;
         promoter.promoterAddress = _addressPromoter;

@@ -2,25 +2,30 @@ const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 const { BN } = require('@openzeppelin/test-helpers/src/setup');
 const { expect } = require('chai');
 const truffleAssert = require('truffle-assertions');
-const Voting = artifacts.require('SuiviMed');
+const SuiviMed = artifacts.require('SuiviMed');
 
-contract('SuiviMed Tests', function (accounts) {
+contract("SuiviMed", function (accounts) {
     const root = accounts[0];
     const promoterAdmin= accounts[1];
     const authorityAdmin = accounts[2];
-
-    // const notOwner = accounts[1];
-    // const nonAuthorized = accounts[2];
-    // const whitelisted2 = accounts[3];
-    // const authorizedVoter1 = accounts[4]
-    // const authorizedVoter2= accounts[5]
-    // const authorizedVoter3 = accounts[6]
-    // const authorizedVoter4 = accounts[7]
-    // const authorizedVoter5 = accounts[8]
-    // const authorizedVoter6 = accounts[9]
-
+    const promoter1 = accounts[3];
+    const authority1 = accounts[4];
+    const noRole = accounts[5];
+   
     // Before each unitary tests
     beforeEach(async function () {
-        this.SuiviMedInstance = await SuiviMed.new({from: root});
+        this.SuiviMedInstance = await SuiviMed.new(root,promoterAdmin,authorityAdmin,{from:root});
     });
+
+    it('verifies proper access to addPromoter function', async function () {
+        // verifies revert if called by noRole address
+        await (expectRevert(this.SuiviMedInstance.addPromoter(promoter1, {from:noRole}),"You are not Promoter Admin!"));
+        // verifies promoter1 address properly is promoters first Promoter address 
+        await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
+        let promoters = await this.SuiviMedInstance.promoters; 
+        let firstPromoter = await promoters(0);
+        let firstPromoterAddress = await firstPromoter.promoterAddress;
+        expect(firstPromoterAddress).to.equal(promoter1);
+    });
+
 });
