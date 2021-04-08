@@ -22,7 +22,7 @@ Un promoteur crée un protocol pour un essai clinique. Du point de vue du smart 
 
 - (descriptionCID) une partie est relative à la description de l'étude et donne les méthodes d'investigation ainsi qu'une notice d'avertissement pour les patients qui souhaitent participer aux essais cliniques. Cette partie du document protocole est accessibles à toutes les personnes réunis dans un projet (promoteurs, autorités, investigateurs, patients).
 - (treatmentsListCID) l'autre partie est une annexe donnant la liste des numéros de patients et de leur traitements associés (soit le vrai traitement médical qui fait l'objet de l'étude, soit un placebo). Ce document est crypté pour n'être accessible que par les promoteurs et les autorités. Ce document est également stocké sur ipfs ainsi que son hash sur la blockchain.
-- 
+
 Ce protocole doit alors être soumis aux autorités pour être validé avant de pouvoir lancer les essais cliniques. Les autorités ont seules accès à la fonction "validateProtocol()" pour effectuer la validation.
 
 Une fois le protocole validé, un projet peut être crée par un promoteur (et éventuellement des associés) en utilisant la fonction "createProject()". Un projet est initié et financé par les promoteurs qui enrollent des investigateurs pour recruter des patients et réaliser les études cliniques. Les investigateurs sont donc enregistrés dans la blockchain ainsi que les patients qu'ils recrutent grâce à la fonction "addPatients()". Leur consentement est recueilli en même temps et enregistré dans la blockchain.
