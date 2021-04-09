@@ -25,7 +25,7 @@ contract SuiviMed is AccessControl {
 
     struct Investigator {
         uint256 protocolID;
-        address investigaterAddress;
+        address investigatorAddress;
     }
 
     struct Patient {
@@ -113,7 +113,8 @@ contract SuiviMed is AccessControl {
         string memory _descriptionCID,
         string memory _treatmentsListCID
     ) public {
-        require(hasRole(PROMOTER, msg.sender),"You are not promoter!");
+        // @dev require that the promoter creating the protocol is  listed among promoters of this protocol
+        require(msg.sender==promoters[_promoterID].promoterAddress,"Not among promoters of this protocol!");
         protocols.push(
             Protocol(false,false, block.timestamp,_promoterID,_descriptionCID, _treatmentsListCID)
         );
@@ -144,7 +145,8 @@ contract SuiviMed is AccessControl {
         uint256 _promoterID,
         address _investigatorAddress
     ) public {
-        require(hasRole(PROMOTER, msg.sender), "You are not Promoter!");
+        // @dev require that the promoter creating the protocol is listed among project creators
+        require(msg.sender==promoters[_promoterID].promoterAddress,"Not among promoters of this project!");
         require(protocols[_protocolID].validated = true,"This protocol has not been validated!");
         investigators.push(Investigator(_protocolID,_investigatorAddress));
         grantRole(INVESTIGATOR,_investigatorAddress);
@@ -158,7 +160,8 @@ contract SuiviMed is AccessControl {
     }
 
     function validateProtocol(uint256 _protocolID,uint _authorityID) public {
-        require(hasRole(AUTHORITY, msg.sender), "You are not authority!");
+        // @dev require that the authority validating has been registered as authority and is the one specified
+        require(msg.sender==authorities[_authorityID].authorityAddress,"Not authority that should validate this protocol!");
         protocols[_protocolID].validated = true;
         validatedProtocolByAuthority[_protocolID] = authorities[_authorityID].authorityAddress;
         authorities[_authorityID].protocolsIDs.push(_protocolID); //may be removed ...???
@@ -183,7 +186,8 @@ contract SuiviMed is AccessControl {
         string memory _dataCID,
         string memory _nameCID
     ) public {
-        require(hasRole(INVESTIGATOR, msg.sender), "You are not investigator!");
+        // @dev require that the authority validating has been registered as authority and is the one specified
+        require(msg.sender==investigators[_investigatorID].investigatorAddress,"Not investigator specified!");
         //@notice prevents adding patients for the study if protocol has an alert on
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
         Patient memory _patient;
@@ -220,7 +224,7 @@ contract SuiviMed is AccessControl {
     function collectData(uint256 _patientID,string memory _newDataCID) public {
         require(
             investigators[patients[_patientID].investigatorID]
-                .investigaterAddress == msg.sender,
+                .investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
         require(patients[_patientID].consent = true,"The patient's consent to the protocol is not given");
@@ -238,7 +242,7 @@ contract SuiviMed is AccessControl {
     function setAlertOn(uint _patientID,uint _protocolID) public {
         require(
             investigators[patients[_patientID].investigatorID]
-                .investigaterAddress == msg.sender,
+                .investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
         protocols[_protocolID].alertOn = true;
