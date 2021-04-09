@@ -4,7 +4,7 @@ Pour améliorer la sécurité et la transparence du système, les données des p
 
 # Installation des différents packages
 
-Il existe plusieurs packages qui permettent d'interagir avec IPFS, pour ce travail nous avons choisi le package [ipfs-core](https://www.npmjs.com/package/ipfs-core) qui est simple d'utilisation et permet de démarrer ipfs sans l'avoir lancer sur le terminal [(voir ce lien)](https://github.com/ipfs/js-ipfs).
+Il existe plusieurs packages qui permettent d'interagir avec IPFS, pour ce travail nous avons choisi le package [ipfs-core](https://www.npmjs.com/package/ipfs-core) qui est simple d'utilisation et permet de démarrer ipfs sans l'avoir lancé sur le terminal [(voir ce lien)](https://github.com/ipfs/js-ipfs).
 
 ```bash
 npm i ipfs-core
