@@ -39,6 +39,10 @@ La reprise des essais cliniques peut être décidée par l'accord commun des pro
 En cas de modification du protocole d'un essai clinique, le consentement d'un patient est de nouveau exigé pour pouvoir continuer les essais. Ainsi la fonction "updateProtocol()" retire le consentement des Patients concernés.
 
 # Installation et éxécution
-Le contrat sera déployé par un developpeur blockchain de SuiviMed. 
+Le contrat sera déployé par l'adresse root, qui initialise le système en fournissant une adresse promoteurAdmin et une adresse autorithyAdmin. Puis root renonce à ses droits d'Admin.
+
+La bibliothèque @openzeppelin/contracts/access/AccessControl.sol doit être installée:
+
+npm install @openzeppelin/contracts
 
 
