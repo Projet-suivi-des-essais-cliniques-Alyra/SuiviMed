@@ -187,7 +187,7 @@ contract SuiviMed is AccessControl {
         string memory _nameCID
     ) public {
         // @dev require that the authority validating has been registered as authority and is the one specified
-        require(msg.sender==investigators[_investigatorID].investigatorAddress,"Not investigator specified!");
+        require(msg.sender==investigators[_investigatorID].investigatorAddress,"Not the investigator specified!");
         //@notice prevents adding patients for the study if protocol has an alert on
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
         Patient memory _patient;
@@ -227,9 +227,9 @@ contract SuiviMed is AccessControl {
                 .investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
-        require(patients[_patientID].consent = true,"The patient's consent to the protocol is not given");
+        require(patients[_patientID].consent = true,"No patient's consent!");
         //@notice stops collecting data on patients if protocol has an alert on
-        require(protocols[patients[_patientID].projectID].alertOn==false);
+        require(protocols[patients[_patientID].projectID].alertOn==false,"Alert on this protocol!");
         //@dev to keep historic of dataCID in the blockchain
         patients[_patientID].dataCID.push(_newDataCID);
         emit dataCollected(_patientID);
