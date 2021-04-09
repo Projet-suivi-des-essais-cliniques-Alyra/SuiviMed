@@ -102,6 +102,7 @@ contract SuiviMed2 is AccessControl {
     }
     
     function addInvestigator(address _addressInvestigator,uint _projectID) public {
+        require(projects[_projectID].promoterAddress!=address(0),"this project does not exist yet!");
         require(hasRole(PROMOTER, msg.sender),"You are not Promoter!");
         grantRole(INVESTIGATOR,_addressInvestigator);
         emit investigatorAdded(_addressInvestigator);
