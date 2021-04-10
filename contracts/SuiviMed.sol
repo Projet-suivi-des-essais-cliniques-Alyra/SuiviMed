@@ -13,24 +13,9 @@ contract SuiviMed is AccessControl {
     bytes32 public constant PROMOTERADMIN = keccak256("PROMOTERADMIN");
     bytes32 public constant INVESTIGATOR = keccak256("INVESTIGATOR");
     
-    struct Promoter {
-        uint256 protocolID;
-        address promoterAddress;
-    }
-
-    struct Authority {
-        uint256[] protocolsIDs;
-        address authorityAddress;
-    }
-
-    struct Investigator {
-        uint256 protocolID;
-        address investigatorAddress;
-    }
-
     struct Patient {
         address patientAddress;
-        uint256 investigatorID;
+        address investigatorAddress;
         uint256 projectID;
         string[] dataCID;
         string nameCID;
@@ -41,19 +26,19 @@ contract SuiviMed is AccessControl {
         bool validated;
         bool alertOn;
         uint256 date;
-        uint promoterID;
+        address promoterAddress;
         string descriptionCID;
         string treatmentsListCID;
     }
 
     struct Project {
         uint256 protocolID;
-        uint256 promoterID;
-        uint256 investigatorID;
+        address promoterAddress;
+        address[] investigatorsAddresses;
     }
     
     // @dev To keep track which authority has validated protocols 
-    mapping(uint=>address) validatedProtocolByAuthority;
+    mapping(uint=>address) protocolValidatedByAuthority;
     // @dev to keep track which patients were added to a project
     mapping(uint=>uint[]) projectIDToPatientsIDs;
     // @dev to keep track which projects are associated with a protocol (for now only one)
@@ -63,20 +48,17 @@ contract SuiviMed is AccessControl {
     
     // @notice ces tableaux enregistrent les infos des projets ainsi que leurs participants sur la blockchain
     Protocol[] public protocols;
-    Promoter[] public promoters;
-    Investigator[] public investigators;
     Project[] public projects;
     Patient[] public patients;
-    Authority[] public authorities;
-
+    
     // @notice The events are broadcasting alerts and infos, 
     // @notice and allow tracking smart contract interactions
     event promoterAdded(address _addressPromoter);
     event authorityAdded(address _addressAuthority);
-    event protocolCreation(uint _promoterID,uint _protocolID);
+    event protocolCreation(address _promoterAddress,uint _protocolID);
     event projectCreation(uint256 _projectID,uint _protocolID);
     event investigatorAdded(address _investigatorAddress);
-    event protocolValidation(uint256 _protocolID, uint _authorityID);
+    event protocolValidation(uint256 _protocolID, address _authorityAddress);
     event patientAdded(uint _patientID,uint _projectID);
     event consentRevoked(uint _patientID);
     event newConsent(uint _patientID);
@@ -107,69 +89,76 @@ contract SuiviMed is AccessControl {
         renounceRole(DEFAULT_ADMIN_ROLE,root);
     }
 
-    // @notice promoters can create new protocols with this function
+    // @notice This function adds new promoters by promoter admins
+    function addPromoter(address _addressPromoter) public {
+        require(hasRole(PROMOTERADMIN, msg.sender),"You are not Promoter Admin!");
+        require(!hasRole(PROMOTER,_addressPromoter),"Address is already Promoter!");
+        grantRole(PROMOTER,_addressPromoter);
+        emit promoterAdded(_addressPromoter);
+    }
+    
+    // @notice This function adds new authorities by authority admins
+    function addAuthority(address _addressAuthority) public {
+        require(hasRole(AUTHORITYADMIN, msg.sender), "You are not Authority Admin!");
+        require(!hasRole(AUTHORITY,_addressAuthority),"Address is already Authority!");
+        grantRole(AUTHORITY,_addressAuthority);
+        emit authorityAdded(_addressAuthority);
+    }
+    // @notice This function adds new investigators on a project by a promoter
+    function addInvestigator(address _addressInvestigator,uint _projectID) public {
+        require(projects[_projectID].promoterAddress!=address(0),"this project does not exist yet!");
+        require(hasRole(PROMOTER, msg.sender),"You are not Promoter!");
+        require(!hasRole(INVESTIGATOR,_addressInvestigator),"Address is already Investigator!");
+        grantRole(INVESTIGATOR,_addressInvestigator);
+        emit investigatorAdded(_addressInvestigator);
+        projects[_projectID].investigatorsAddresses.push(_addressInvestigator);
+    }
+    
+    // @notice Promoters can create new protocols with this function
     function createProtocol(
-        uint _promoterID,
         string memory _descriptionCID,
         string memory _treatmentsListCID
     ) public {
-        // @dev require that the promoter creating the protocol is  listed among promoters of this protocol
-        require(msg.sender==promoters[_promoterID].promoterAddress,"Not among promoters of this protocol!");
+        require(hasRole(PROMOTER, msg.sender),"You are not Promoter!");
         protocols.push(
-            Protocol(false,false, block.timestamp,_promoterID,_descriptionCID, _treatmentsListCID)
+            Protocol(false,false, block.timestamp,msg.sender,_descriptionCID, _treatmentsListCID)
         );
         uint _protocolID=protocols.length-1;
-        emit protocolCreation(_promoterID,_protocolID);
+        emit protocolCreation(msg.sender,_protocolID);
     }
     
-    function addPromoter(address _addressPromoter) public {
-        require(hasRole(PROMOTERADMIN, msg.sender),"You are not Promoter Admin!");
-        grantRole(PROMOTER,_addressPromoter);
-        Promoter memory promoter;
-        promoter.promoterAddress = _addressPromoter;
-        promoters.push(promoter); 
-        emit promoterAdded(_addressPromoter);
-    }
-   
-    function addAuthority(address _addressAuthority) public {
-        require(hasRole(AUTHORITYADMIN, msg.sender), "You are not Authority Admin!");
-        grantRole(AUTHORITY,_addressAuthority);
-        Authority memory authority;
-        authority.authorityAddress = _addressAuthority;
-        authorities.push(authority);
-        emit authorityAdded(_addressAuthority);
-    }
-    
+    // @notice Promoters can create new projects with this function 
     function createProject(
         uint256 _protocolID,
-        uint256 _promoterID,
         address _investigatorAddress
     ) public {
-        // @dev require that the promoter creating the protocol is listed among project creators
-        require(msg.sender==promoters[_promoterID].promoterAddress,"Not among promoters of this project!");
+        require(hasRole(PROMOTER, msg.sender),"You are not Promoter!");
         require(protocols[_protocolID].validated = true,"This protocol has not been validated!");
-        investigators.push(Investigator(_protocolID,_investigatorAddress));
         grantRole(INVESTIGATOR,_investigatorAddress);
         emit investigatorAdded(_investigatorAddress);
-        projects.push(
-            Project(_protocolID, _promoterID, investigators.length-1)
-        );
-        uint256 _projectID = projects.length - 1;
+        Project memory project;
+        project.promoterAddress=msg.sender;
+        project.protocolID=_protocolID;
+        projects.push(project);
+        uint _projectID = projects.length - 1;
+        projects[_projectID].investigatorsAddresses.push(_investigatorAddress);
         protocolIDToProjectID[_protocolID]=_projectID;
         emit projectCreation(_projectID,_protocolID);
     }
 
-    function validateProtocol(uint256 _protocolID,uint _authorityID) public {
+    // @notice Authorities can validate protocols with this function
+    function validateProtocol(uint256 _protocolID) public {
         // @dev require that the authority validating has been registered as authority and is the one specified
-        require(msg.sender==authorities[_authorityID].authorityAddress,"Not authority that should validate this protocol!");
+        require(hasRole(AUTHORITY, msg.sender), "You are not Authority!");
         protocols[_protocolID].validated = true;
-        validatedProtocolByAuthority[_protocolID] = authorities[_authorityID].authorityAddress;
-        authorities[_authorityID].protocolsIDs.push(_protocolID); //may be removed ...???
-        emit protocolValidation(_protocolID,_authorityID);
+        protocolValidatedByAuthority[_protocolID] = msg.sender;
+        emit protocolValidation(_protocolID,msg.sender);
     }
     
+    // @notice A protocol can be updated by its promoter owner with this function.
+    // @notice This function force patients to reconsider the protocol and renew their consent 
     function updateProtocol(uint _protocolID,string memory _newDescriptionCID,string memory _newTreatmentsListCID) public {
-        require(promoters[protocols[_protocolID].promoterID].promoterAddress == msg.sender,"You are not allowed to update the protocol!");
+        require(protocols[_protocolID].promoterAddress == msg.sender,"You are not allowed to update the protocol!");
         protocols[_protocolID].descriptionCID = _newDescriptionCID;
         protocols[_protocolID].treatmentsListCID = _newTreatmentsListCID;
         protocols[_protocolID].validated = false;
@@ -179,20 +168,18 @@ contract SuiviMed is AccessControl {
         emit protocolUpdated(_protocolID);
     }
     
+    // @notice Investigators can recruit new patients with this function and initially register their consent
     function addPatient(
         address _patientAddress,
-        uint256 _investigatorID,
         uint256 _projectID,
         string memory _dataCID,
         string memory _nameCID
     ) public {
-        // @dev require that the authority validating has been registered as authority and is the one specified
-        require(msg.sender==investigators[_investigatorID].investigatorAddress,"Not the investigator specified!");
-        //@notice prevents adding patients for the study if protocol has an alert on
+        require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
         Patient memory _patient;
         _patient.patientAddress = _patientAddress;
-        _patient.investigatorID = _investigatorID;
+        _patient.investigatorAddress = msg.sender;
         _patient.projectID = _projectID;
         _patient.nameCID = _nameCID;
         _patient.consent = true;
@@ -203,6 +190,7 @@ contract SuiviMed is AccessControl {
         emit patientAdded(_patientID,_projectID);
     }
     
+    // @notice Patients can renew their consent using this function
     function consent(uint256 _patientID) public {
         require(
             patients[_patientID].patientAddress == msg.sender,
@@ -212,6 +200,7 @@ contract SuiviMed is AccessControl {
         emit newConsent(_patientID);
     }
 
+    // @notice Patients  can revoke their consent using this function
     function revokeConsent(uint256 _patientID) public {
         require(
             patients[_patientID].patientAddress == msg.sender,
@@ -221,10 +210,10 @@ contract SuiviMed is AccessControl {
         emit consentRevoked(_patientID);
     }
 
+    // @notice Investigators collects medical data of their patients using this function
     function collectData(uint256 _patientID,string memory _newDataCID) public {
         require(
-            investigators[patients[_patientID].investigatorID]
-                .investigatorAddress == msg.sender,
+            patients[_patientID].investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
         require(patients[_patientID].consent = true,"No patient's consent!");
@@ -239,30 +228,30 @@ contract SuiviMed is AccessControl {
         return patients[_patientID].dataCID;
     }
 
+    // @notice Investigators trigger an alert for a protocol using this function
     function setAlertOn(uint _patientID,uint _protocolID) public {
         require(
-            investigators[patients[_patientID].investigatorID]
-                .investigatorAddress == msg.sender,
+            patients[_patientID].investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
         protocols[_protocolID].alertOn = true;
         emit alert(_patientID,_protocolID);
     }
     
-    // @notice this function collects agreement of promoters and authorities to resume clinical trials
+    // @notice This function collects agreement of promoters and authorities to resume clinical trials
     function agreeOnResume(uint _protocolID) public {
-        require (msg.sender == promoters[protocols[_protocolID].promoterID].promoterAddress || msg.sender==validatedProtocolByAuthority[_protocolID]);
+        require (msg.sender == protocols[_protocolID].promoterAddress || msg.sender==protocolValidatedByAuthority[_protocolID]);
         require (agreedOnResume[msg.sender] == false);
         agreedOnResume[msg.sender] = true;
         emit agreedOnResumeEvent(_protocolID,msg.sender);
     }
     
-    // @notice this function allow resuming clinical trials with agreement of promoters and authorities
+    // @notice This function allows resuming clinical trials with agreement of promoters and authorities
     function resumeAfterAlert(uint _protocolID) public {
-        require (agreedOnResume[promoters[protocols[_protocolID].promoterID].promoterAddress] == true && agreedOnResume[validatedProtocolByAuthority[_protocolID]] == true);
+        require (agreedOnResume[protocols[_protocolID].promoterAddress] == true && agreedOnResume[protocolValidatedByAuthority[_protocolID]] == true);
         protocols[_protocolID].alertOn = false;
-        agreedOnResume[promoters[protocols[_protocolID].promoterID].promoterAddress] = false;
-        agreedOnResume[validatedProtocolByAuthority[_protocolID]] = false;
+        agreedOnResume[protocols[_protocolID].promoterAddress] = false;
+        agreedOnResume[protocolValidatedByAuthority[_protocolID]] = false;
         emit resumedAfterAlert(_protocolID);
     }
 
