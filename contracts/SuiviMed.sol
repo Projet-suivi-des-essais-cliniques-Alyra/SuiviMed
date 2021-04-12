@@ -57,7 +57,7 @@ contract SuiviMed is AccessControl {
     mapping(uint=>uint[]) projectIDToPatientsIDs;
     
     /**
-    * @dev to keep track which projects are associated with a protocol (for now only one)
+    * @dev to keep track which project is associated with a protocol
     */
     mapping(uint=>uint) protocolIDToProjectID;
     
@@ -210,7 +210,7 @@ contract SuiviMed is AccessControl {
     
     /**
     * @notice A protocol can be updated by its promoter owner with this function.
-    * @notice This function force patients to reconsider the protocol and renew their consent 
+    * This function force patients to reconsider the protocol and renew their consent 
     */
     function updateProtocol(uint _protocolID,string memory _newDescriptionCID,string memory _newTreatmentsListCID) public {
         require(protocols[_protocolID].promoterAddress == msg.sender,"You are not allowed to update the protocol!");
@@ -293,7 +293,7 @@ contract SuiviMed is AccessControl {
             patients[_patientID].investigatorAddress == msg.sender,
             "You are not authorized to access this patient's data!"
         );
-        require(patients[_patientID].consent = true,"No patient's consent!");
+        require(patients[_patientID].consent == true,"No patient's consent!");
         /**
         * @notice stops collecting data on patients if protocol has an alert on
         */
