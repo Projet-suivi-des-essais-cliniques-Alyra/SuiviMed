@@ -232,7 +232,7 @@ contract SuiviMed is AccessControl {
         string memory _dataCID,
         string memory _nameCID
     ) public {
-        // require(isPatientAlreadyInProject(_projectID,_patientAddress),"Patients already registered!");
+        require(!isPatientAlreadyInProject(_projectID,_patientAddress),"Patients already registered!");
         require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
         Patient memory _patient;
@@ -251,15 +251,15 @@ contract SuiviMed is AccessControl {
     /**
     * @notice This function checks if a patient is already enrolled in a project 
     */
-    // function isPatientAlreadyInProject(uint _projectID,address _patientAddress) view private returns (bool){
-    //     for (uint i = 0; i < patients.length; i++) {
-    //         if (patients[i].patientAddress==_patientAddress
-    //             && patients[i].projectID ==_projectID) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    function isPatientAlreadyInProject(uint _projectID,address _patientAddress) view private returns (bool){
+        for (uint i = 0; i < patients.length; i++) {
+            if (patients[i].patientAddress==_patientAddress
+                && patients[i].projectID ==_projectID) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /**
     * @notice Patients can renew their consent using this function
