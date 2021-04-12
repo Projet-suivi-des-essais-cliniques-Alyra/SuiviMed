@@ -326,7 +326,8 @@ contract SuiviMed is AccessControl {
     * @notice This function collects agreement of promoters and authorities to resume clinical trials
     */
     function agreeOnResume(uint _protocolID) public {
-        require (msg.sender == protocols[_protocolID].promoterAddress || msg.sender==protocolValidatedByAuthority[_protocolID]);
+        require (msg.sender == protocols[_protocolID].promoterAddress || msg.sender==protocolValidatedByAuthority[_protocolID],
+        "not eligible to give agreement!");
         require (agreedOnResume[msg.sender] == false);
         agreedOnResume[msg.sender] = true;
         emit agreedOnResumeEvent(_protocolID,msg.sender);
