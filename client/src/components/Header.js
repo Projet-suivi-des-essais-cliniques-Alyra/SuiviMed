@@ -9,7 +9,7 @@ class Header extends React.Component {
                 </h4>
                 <h4 className="ui left floated header">
                     <strong> {`${this.props.balance} ETH`} </strong>
-                </h4>                
+                </h4>
             </div>
         );
     }

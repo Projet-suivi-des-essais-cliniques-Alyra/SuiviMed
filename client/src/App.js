@@ -2,8 +2,13 @@ import React, { Component } from "react";
 import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
 import Header from "./components/Header";
+import Promoter from "./components/Promoter";
+import encryptData from "./utils/encryptData";
 
 import "./App.css";
+
+const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
+const IV_LENGTH = 16;
 
 class App extends Component {
   state = {
@@ -12,7 +17,8 @@ class App extends Component {
     accounts: null,
     contract: null,
     balance: null,
-    currentAccount: null
+    currentAccount: null,
+    protocolDescription: null
   };
 
   componentDidMount = async () => {
@@ -41,13 +47,14 @@ class App extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState(
-        { web3,
+        {
+          web3,
           accounts,
           contract: instance,
           currentAccount: accounts[0]
         },
         this.runExample
-        );
+      );
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -88,8 +95,17 @@ class App extends Component {
   }
 
   onProtocolDescriptionUpload = event => {
-    console.log("THE FILE =", event.target.files[0].name);
+    console.log("THE FILE =", event.target.files[0]);
+
+    //this.setState({ protocolDescription: event.target.files[0] });
+    //console.log(this.state.protocolDescription);
+
+    let encryptedData = encryptData(event.target.files[0], IV_LENGTH, ENCRYPTION_KEY);
+    console.log(encryptedData);
+
   }
+
+
 
   render() {
     if (!this.state.web3) {
@@ -97,13 +113,10 @@ class App extends Component {
     }
     return (
       <div className="ui container App">
-        <Header
+        <Promoter
           balance={this.state.balance}
-          account = {this.state.currentAccount}
-        /> 
-        <h1>Upload file!</h1>
-
-        <input type="file" name="protocole" onChange={this.onProtocolDescriptionUpload}/>
+          account={this.state.currentAccount}
+        />
       </div>
     );
   }

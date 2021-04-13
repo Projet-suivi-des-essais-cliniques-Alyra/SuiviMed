@@ -233,7 +233,7 @@ contract SuiviMed is AccessControl {
         string memory _nameCID
     ) public {
         require(!isPatientAlreadyInProject(_projectID,_patientAddress),"Patients already registered!");
-        require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
+        require(hasRole(INVESTIGATOR, msg.sender),"You are not Investigator!");
         require(protocols[projects[_projectID].protocolID].alertOn==false,"This protocol has an alert!");
         Patient memory _patient;
         _patient.patientAddress = _patientAddress;
@@ -337,7 +337,9 @@ contract SuiviMed is AccessControl {
     * @notice This function allows resuming clinical trials with agreement of promoters and authorities
     */
     function resumeAfterAlert(uint _protocolID) public {
-        require (agreedOnResume[protocols[_protocolID].promoterAddress] == true && agreedOnResume[protocolValidatedByAuthority[_protocolID]] == true);
+        require (agreedOnResume[protocols[_protocolID].promoterAddress] == true
+         && agreedOnResume[protocolValidatedByAuthority[_protocolID]] == true,"promoter and authority not agreed yet!");
+        require (msg.sender == protocols[_protocolID].promoterAddress,"Not entitled to restart clinical trials!"); 
         protocols[_protocolID].alertOn = false;
         projects[protocolIDToProjectID[_protocolID]].status = Status.ACTIVE;
         agreedOnResume[protocols[_protocolID].promoterAddress] = false;

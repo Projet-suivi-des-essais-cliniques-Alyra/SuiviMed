@@ -1,7 +1,6 @@
 const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 const { BN } = require('@openzeppelin/test-helpers/src/setup');
 const { expect } = require('chai');
-const truffleAssert = require('truffle-assertions');
 const SuiviMed = artifacts.require('SuiviMed');
 
 contract("SuiviMed", function (accounts) {
@@ -24,11 +23,12 @@ contract("SuiviMed", function (accounts) {
         this.SuiviMedInstance = await SuiviMed.new(root,promoterAdmin,authorityAdmin,{from:root});
     });
 
-    it('verifies proper access to addPromoter function', async function () {
+    it('Test verifies proper access to addPromoter function', async function () {
         // verifies revert if called by noRole address
         await expectRevert(this.SuiviMedInstance.addPromoter(promoter1, {from:noRole}),"You are not Promoter Admin!");
         // verifies promoter1 address properly is promoters first Promoter address 
-        await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
+        let receipt = await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
+        expectEvent(receipt, "promoterAdded", {_addressPromoter: promoter1 });
         let PROMOTER = await this.SuiviMedInstance.PROMOTER();
         let bool = await this.SuiviMedInstance.hasRole(PROMOTER,promoter1);
         expect(bool).to.equal(true);
@@ -36,7 +36,7 @@ contract("SuiviMed", function (accounts) {
         await expectRevert(this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin}),"Address is already Promoter!"); 
     });
 
-    it('verifies alert on protocol prevents data of patients to be collected or patients to be added ', async function () {
+    it('Test verifies proper functionning of addPatient function', async function () {
         await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
         await this.SuiviMedInstance.addAuthority(authority1,{from:authorityAdmin});
         //promoter1 creates protocol[0]
@@ -47,20 +47,14 @@ contract("SuiviMed", function (accounts) {
         await this.SuiviMedInstance.createProject(0,investigator1,{from:promoter1});
         //investigator1 adds patients to projects[0]
         await this.SuiviMedInstance.addPatient(patient1,0,"Data1aCID","Name1CID",{from:investigator1});
+        //verifies Patient cannot be added by other than investigator
+        await expectRevert(this.SuiviMedInstance.addPatient(patient2,0,"Data2aCID","Name2CID",{from:promoter1}),"You are not Investigator!");
         await this.SuiviMedInstance.addPatient(patient2,0,"Data2aCID","Name2CID",{from:investigator1});
-        //investigator1 set alert on
-        await this.SuiviMedInstance.setAlertOn(1,0,{from:investigator1});
-        //verifies that the investigator1 cannot add another patient while alert is on for protocol[0]
-        await expectRevert(this.SuiviMedInstance.addPatient(patient3,0,"Data3aCID","Name3CID",{from:investigator1}),
-        "This protocol has an alert!");
-        //verifies that the investigator1 cannot collect data of patients while alert is on for protocol[0]
-        await expectRevert(this.SuiviMedInstance.collectData(0,"Data3bCID",{from:investigator1}),"Alert on this protocol!");
-        // verifies that others protocols activities are still active
-        //verifies that agreement of promoter and authority is needed for 
-    })
+        //verifies Patient1 cannot be added again
+        await expectRevert(this.SuiviMedInstance.addPatient(patient1,0,"Data1aCID","Name1CID",{from:investigator1}),"Patients already registered!");
+    });
 
-
-    it('verifies alert on protocol prevents data of patients to be collected or patients to be added and others things', async function () {
+    it('Scenario verifying the functionning of alert on protocol', async function () {
         await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
         await this.SuiviMedInstance.addPromoter(promoter2,{from:promoterAdmin});
         await this.SuiviMedInstance.addAuthority(authority1,{from:authorityAdmin});
@@ -84,17 +78,24 @@ contract("SuiviMed", function (accounts) {
         await expectRevert(this.SuiviMedInstance.addPatient(patient3,0,"Data3aCID","Name3CID",{from:investigator1}),
         "This protocol has an alert!");
         // verifies that others protocols activities are still active
-        // for instance no revert expected for adding patient3 to projects[1] by investigator2
+        // ... for instance no revert expected for adding patient3 to projects[1] by investigator2
         await this.SuiviMedInstance.addPatient(patient3,1,"Data3aCID","Name3CID",{from:investigator2});
-        //verifies that the investigator1 cannot collect data of patients while alert is on for protocol[0]
+        //... however the investigator1 cannot collect data of patients while alert is on for protocol[0]
         await expectRevert(this.SuiviMedInstance.collectData(0,"Data3bCID",{from:investigator1}),"Alert on this protocol!");
-        //verifies that agreement of promoter and authority is needed to resume activity of protocols[0]
+        // verifies that agreement of promoter and authority is needed to resume activity of protocols[0]
         await this.SuiviMedInstance.agreeOnResume(0,{from:promoter1});
         await expectRevert(this.SuiviMedInstance.agreeOnResume(0,{from:promoter2}),"not eligible to give agreement!");
-
+        // verifies that we cannot acces resumeAfterAlert() yet 
+        await expectRevert(this.SuiviMedInstance.resumeAfterAlert(0,{from:promoter1}),"promoter and authority not agreed yet!");
+        // authority1 is now agreeing on resuming ... and promoter1 to restart clinical trials
+        await this.SuiviMedInstance.agreeOnResume(0,{from:authority1});
+        await this.SuiviMedInstance.resumeAfterAlert(0,{from:promoter1});
+        //We can then verify that investigator1 can add another patient to the project or collect patients data again
+        this.SuiviMedInstance.addPatient(patient3,0,"Data3aCID","Name3CID",{from:investigator1});
+        this.SuiviMedInstance.collectData(0,"Data3bCID",{from:investigator1});
     })
     
-    it('verifies consents of patients is revoked when protocol is updated', async function () {
+    it('Scenario verifying consents of patients is revoked when protocol is updated', async function () {
         await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
         await this.SuiviMedInstance.addAuthority(authority1,{from:authorityAdmin});
         //promoter1 creates protocol[0]
@@ -126,7 +127,7 @@ contract("SuiviMed", function (accounts) {
         expect(firstPatientConsent).to.equal(false);        
     })
 
-    it('verifies data of patients, which revoked their consent, cannot be collected anymore', async function () {
+    it('Scenario verifying data of patients, whose consent were revoked, cannot be collected anymore', async function () {
         await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
         await this.SuiviMedInstance.addAuthority(authority1,{from:authorityAdmin});
         //promoter1 creates protocol[0]
@@ -147,7 +148,5 @@ contract("SuiviMed", function (accounts) {
         //verifies data of patients[0] cannot be collected anymore
         await expectRevert(this.SuiviMedInstance.collectData(0,"Data1bCID",{from:investigator1}),"No patient's consent!");        
     })
-
-
 
 });
