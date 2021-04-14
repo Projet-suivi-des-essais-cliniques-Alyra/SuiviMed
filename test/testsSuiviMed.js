@@ -20,9 +20,9 @@ contract("SuiviMed", function (accounts) {
 
     // Before each unitary tests
     beforeEach(async function () {
-        this.SuiviMedInstance = await SuiviMed.new(root,promoterAdmin,authorityAdmin,{from:root});
+        this.SuiviMedInstance = await SuiviMed.new(promoterAdmin,authorityAdmin);
     });
-
+   
     it('Test verifies proper access to addPromoter function', async function () {
         // verifies revert if called by noRole address
         await expectRevert(this.SuiviMedInstance.addPromoter(promoter1, {from:noRole}),"You are not Promoter Admin!");
