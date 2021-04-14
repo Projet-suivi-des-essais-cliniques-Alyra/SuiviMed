@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  */
 contract SuiviMed is AccessControl {
     /**
-     * @dev Defines the Roles of AccessControl
+     * @dev Defines the Roles of AccessControl.
      */
     bytes32 public constant AUTHORITY = keccak256("AUTHORITY");
     bytes32 public constant AUTHORITYADMIN = keccak256("AUTHORITYADMIN");
@@ -46,27 +46,27 @@ contract SuiviMed is AccessControl {
     }
 
     /**
-     * @dev To keep track which authority has validated protocols
+     * @dev To keep track which authority has validated protocols.
      */
     mapping(uint256 => address) protocolValidatedByAuthority;
 
     /**
-     * @dev to keep track which patients were added to a project
+     * @dev to keep track which patients were added to a project.
      */
     mapping(uint256 => uint256[]) projectIDToPatientsIDs;
 
     /**
-     * @dev to keep track which project is associated with a protocol
+     * @dev to keep track which project is associated with a protocol.
      */
     mapping(uint256 => uint256) protocolIDToProjectID;
 
     /**
-     * @dev for multisig agreement on resuming clinical trials
+     * @dev for multisig agreement on resuming clinical trials.
      */
     mapping(address => bool) agreedOnResume;
 
     /**
-     * @notice ces tableaux enregistrent les infos des projets ainsi que leurs participants sur la blockchain
+     * @notice ces tableaux enregistrent les infos des projets ainsi que leurs participants sur la blockchain.
      */
     Protocol[] public protocols;
     Project[] public projects;
@@ -74,7 +74,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice The events are broadcasting alerts and infos,
-     * @notice and allow tracking smart contract interactions
+     *  and allow tracking smart contract interactions.
      */
     event promoterAdded(address _addressPromoter);
     event authorityAdded(address _addressAuthority);
@@ -92,38 +92,41 @@ contract SuiviMed is AccessControl {
     event protocolUpdated(uint256 _protocolID);
 
     /**
-     * @dev the constructor initializes the roles of promoters and authorities
+     * @dev the constructor initializes the roles of promoters and authorities.
+     * @param _addressPromoter the address of the first promoter designated to be promoters and investigators Admin
+     * @param _addressAuthority the address of the first authority designated to be authorities Admin
      */
     constructor(
         address _addressPromoter,
         address _addressAuthority
     ) {
         /**
-         * @dev Set first address to be Promoter and admin of Promoters
+         * @dev Set first address to be Promoter and admin of Promoters.
          */
         _setupRole(PROMOTER, _addressPromoter);
         _setupRole(PROMOTERADMIN, _addressPromoter);
         /**
-        * @dev Set PROMOTERADMIN as Admins of PROMOTER
+        * @dev Set PROMOTERADMIN as Admins of PROMOTER.
         */
         _setRoleAdmin(PROMOTER, PROMOTERADMIN);
         /**
-         * @dev Set PROMOTER as Admins of INVESTIGATOR
+         * @dev Set PROMOTER as Admins of INVESTIGATOR.
          */
         _setRoleAdmin(INVESTIGATOR, PROMOTER);
         /**
-         * @dev Set second address to be Authority and admin of Authorities
+         * @dev Set second address to be Authority and admin of Authorities.
          */
         _setupRole(AUTHORITY, _addressAuthority);
         _setupRole(AUTHORITYADMIN, _addressAuthority);
         /**
-         * @dev Set AUTHORITYADMIN as Admins of AUTHORITY
+         * @dev Set AUTHORITYADMIN as Admins of AUTHORITY.
          */
         _setRoleAdmin(AUTHORITY, AUTHORITYADMIN);
     }
 
     /**
-     * @notice This function adds new promoters by promoter admins
+     * @notice This function adds new promoters by promoter admins.
+     * @param _addressPromoter the address to be added to PROMOTER role.
      */
     function addPromoter(address _addressPromoter) public {
         require(
@@ -139,7 +142,8 @@ contract SuiviMed is AccessControl {
     }
 
     /**
-     * @notice This function adds new authorities by authority admins
+     * @notice This function adds new authorities by authority admins.
+     * @param _addressAuthority the address to be added to AUTHORITY role.
      */
     function addAuthority(address _addressAuthority) public {
         require(
@@ -156,6 +160,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice This function adds new investigators on a project by a promoter
+     * @param _addressInvestigator the address to be added to INVESTIGATOR Roles.
+     * @param _projectID the ID of the project, the investigator is added onto.
      */
     function addInvestigator(address _addressInvestigator, uint256 _projectID)
         public
@@ -176,6 +182,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Promoters can create new protocols with this function
+     * @param _descriptionCID the Content Identifier (CID) of the protocol's description part on IPFS.
+     * @param _treatmentsListCID the Content Identifier (CID) of the protocol's treatments list part on IPFS.
      */
     function createProtocol(
         string memory _descriptionCID,
@@ -198,6 +206,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Promoters can create new projects with this function
+     * @param _protocolID ID of the protocol investigated in the project.
+     * @param _investigatorAddress Address of the first investigator added to the project.
      */
     function createProject(uint256 _protocolID, address _investigatorAddress)
         public
@@ -222,6 +232,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Authorities can validate protocols with this function
+     * @param _protocolID ID of the protocol to be validated
      */
     function validateProtocol(uint256 _protocolID) public {
         require(hasRole(AUTHORITY, msg.sender), "You are not Authority!");
@@ -232,7 +243,10 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice A protocol can be updated by its promoter owner with this function.
-     * This function force patients to reconsider the protocol and renew their consent
+     * This function forces patients to reconsider the protocol and renew their consent.
+     * @param _protocolID ID of the protocol to be updated.
+     * @param _newDescriptionCID Content Identifier of the description part of the updated protocol on IPFS
+     * @param _newTreatmentsListCID Content Identifier of the treatment list part of the updated protocol on IPFS
      */
     function updateProtocol(
         uint256 _protocolID,
@@ -262,6 +276,10 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Investigators can recruit new patients with this function and initially register their consent
+     * @param _patientAddress Address of the patient to be recruited.
+     * @param _projectID ID of the tials project for which the patient is recruited.
+     * @param _dataCID Content Identifier on IPFS of first of initial medical records of the patient. 
+     * @param _nameCID Content Identifier on IPFS of the patient's identity record.
      */
     function addPatient(
         address _patientAddress,
