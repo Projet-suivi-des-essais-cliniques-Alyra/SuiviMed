@@ -12,9 +12,9 @@ Voici une liste des bénéfices de l'implémentation de ce système sur la block
 - Limitation ou suppression des possibilités de corruption ou de biais, en decentralisant le controle du systeme et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
 
 # Fonctionalités:
-Le système est initialisé par un développeur blockchain appelé root qui deploie le contrat pour un client promoteur qui souhaite utiliser le système. Au moment du deploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designée comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
+Le système est initialisé par un promoteur qui souhaite utiliser le système pour apporter de la transparence et de la confiance dans le processus de ses essais cliniques. Au moment du deploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designées comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
 
-Des promoteurs et des autorités peuvent être ajoutés grâce aux fonction "addPromoteurs()" et addAuthorities() accessibles uniquement par les promoteurs admins et autorités admins respectivement.
+Des promoteurs et des autorités peuvent être ajoutés grâce aux fonction "addPromoteurs()" et "addAuthorities()" accessibles uniquement par les promoteurs admins et autorités admins respectivement.
 
 Le processus est le suivant :
 
@@ -39,10 +39,13 @@ La reprise des essais cliniques peut être décidée par l'accord commun des pro
 En cas de modification du protocole d'un essai clinique, le consentement d'un patient est de nouveau exigé pour pouvoir continuer les essais. Ainsi la fonction "updateProtocol()" retire le consentement des Patients concernés.
 
 # Installation et éxécution
-Le contrat sera déployé par l'adresse root, qui initialise le système en fournissant une adresse promoteurAdmin et une adresse autorithyAdmin. Puis root renonce à ses droits d'Admin.
+Le contrat sera déployé par le promoteur qui initialise le système en fournissant son adresse, qui sera designee comme promoteurAdmin, et l'adresse d'une autorite qui sera Admin pour le groupe autorité.
 
 La bibliothèque @openzeppelin/contracts/access/AccessControl.sol doit être installée:
 
 npm install @openzeppelin/contracts
 
+ainsi qu'une bibliothèque de connexion à IPFS:
+
+npm install ipfs-core
 
