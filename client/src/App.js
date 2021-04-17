@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
-import Header from "./components/Header";
+// import Header from "./components/Header";
 import Promoter from "./components/Promoter";
 import encryptData from "./utils/encryptData";
 
@@ -15,10 +15,12 @@ class App extends Component {
     storageValue: 0,
     web3: null,
     accounts: null,
+    role: null,
     contract: null,
     balance: null,
     currentAccount: null,
-    protocolDescription: null
+    protocolDescription: null,
+    CIDs: null
   };
 
   componentDidMount = async () => {
@@ -83,6 +85,7 @@ class App extends Component {
 
   //=============== setting the curent account ===============
   setCurrentAccount = async () => {
+
     await window.ethereum.on('accountsChanged', (accounts) => {
       this.setState({ currentAccount: accounts[0] });
 
@@ -92,6 +95,8 @@ class App extends Component {
         }
       });
     });
+
+    this.setState({role: await this.state.contract.methods.getRole(this.state.currentAccount).call()})
   }
 
   onProtocolDescriptionUpload = event => {
@@ -105,6 +110,15 @@ class App extends Component {
 
   }
 
+  onProtocoleButtonClick = async (protocolDescriptionCID, protocolTreatmentsListID) => {
+    const { contract, currentAccount } = this.state;
+    console.log("CID PROTOCOL APP =", protocolDescriptionCID);
+    console.log("CID LIST APP =", protocolTreatmentsListID);
+    await contract.methods.createProtocol(protocolDescriptionCID,protocolTreatmentsListID).send({from:currentAccount});
+    this.setState({CIDs: await contract.methods.getProtocolCIDs(0).call({from:currentAccount})});
+
+    console.log("CIDS FROM ETHEREUM", this.state.CIDs);
+  }
 
 
   render() {
@@ -114,8 +128,11 @@ class App extends Component {
     return (
       <div className="ui container App">
         <Promoter
-          balance={this.state.balance}
-          account={this.state.currentAccount}
+          // balance={this.state.balance}
+          cids = {this.state.CIDs}
+          role = {this.state.role}
+          account = {this.state.currentAccount}
+          onProtocolClick = {this.onProtocoleButtonClick}
         />
       </div>
     );

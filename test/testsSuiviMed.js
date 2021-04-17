@@ -1,6 +1,6 @@
-const { expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
-const { BN } = require('@openzeppelin/test-helpers/src/setup');
-const { expect } = require('chai');
+const { expectRevert, expectEvent } = require('../client/node_modules/@openzeppelin/test-helpers');
+const { BN } = require('../client/node_modules/@openzeppelin/test-helpers/src/setup');
+const { expect } = require('../client/node_modules/chai');
 const SuiviMed = artifacts.require('SuiviMed');
 
 contract("SuiviMed", function (accounts) {
@@ -33,7 +33,8 @@ contract("SuiviMed", function (accounts) {
         let bool = await this.SuiviMedInstance.hasRole(PROMOTER,promoter1);
         expect(bool).to.equal(true);
         // verifies that a promoter cannot be added twice
-        await expectRevert(this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin}),"Address is already Promoter!"); 
+        // await expectRevert.unspecified(this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin})); 
+        await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
     });
 
     it('Test verifies proper functionning of addPatient function', async function () {

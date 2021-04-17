@@ -2,7 +2,7 @@
 pragma solidity 0.8.0;
 pragma abicoder v2;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "../client/node_modules/@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @title Decentralized clinical trials follow up
@@ -133,10 +133,10 @@ contract SuiviMed is AccessControl {
             hasRole(PROMOTERADMIN, msg.sender),
             "You are not Promoter Admin!"
         );
-        require(
-            !hasRole(PROMOTER, _addressPromoter),
-            "Address is already Promoter!"
-        );
+        // require(
+        //     !hasRole(PROMOTER, _addressPromoter),
+        //     "Address is already Promoter!"
+        // );
         grantRole(PROMOTER, _addressPromoter);
         emit promoterAdded(_addressPromoter);
     }
@@ -277,7 +277,7 @@ contract SuiviMed is AccessControl {
     /**
      * @notice Investigators can recruit new patients with this function and initially register their consent
      * @param _patientAddress Address of the patient to be recruited.
-     * @param _projectID ID of the tials project for which the patient is recruited.
+     * @param _projectID ID of the trials project for which the patient is recruited.
      * @param _dataCID Content Identifier on IPFS of first of initial medical records of the patient. 
      * @param _nameCID Content Identifier on IPFS of the patient's identity record.
      */
@@ -311,6 +311,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice This function checks if a patient is already enrolled in a project
+     * @param _projectID ID of the project concerned by the verification.
+     * @param _patientAddress Address of patient whose participation in the project is to be verified.
      */
     function isPatientAlreadyInProject(
         uint256 _projectID,
@@ -329,6 +331,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Patients can renew their consent using this function
+     * @param _patientID ID of the patient renewing his/her consentement
      */
     function consent(uint256 _patientID) public {
         require(
@@ -341,6 +344,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Patients  can revoke their consent using this function
+     * @param _patientID ID of the patient revoking his/her consentement
      */
     function revokeConsent(uint256 _patientID) public {
         require(

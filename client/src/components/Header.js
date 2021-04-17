@@ -8,7 +8,8 @@ class Header extends React.Component {
                     <strong> {this.props.account.toLowerCase()} </strong>
                 </h4>
                 <h4 className="ui left floated header">
-                    <strong> {`${this.props.balance} ETH`} </strong>
+                    {/* <strong> {`${this.props.balance} ETH`} </strong> */}
+                    <strong> {`${this.props.role}`} </strong>
                 </h4>
             </div>
         );

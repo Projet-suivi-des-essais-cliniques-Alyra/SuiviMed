@@ -8,6 +8,7 @@ const ipfsConnection = require('./ipfsConnection');
 async function sendToIPFS(encryptedData) {
     let ipfs;
     await ipfsConnection.default.then(res => {
+        console.log(res);
         ipfs = res;
     });
 
