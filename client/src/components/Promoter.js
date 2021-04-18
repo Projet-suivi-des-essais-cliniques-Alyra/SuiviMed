@@ -1,11 +1,16 @@
 import React from 'react';
+import ReactFileReader from 'react-file-reader';
 import Header from './Header';
-import encryptData from '../utils/encryptData';
-import decryptData from '../utils/decryptData';
-// import { BrowserRouter, Switch, Route } from "react-router-dom";
-// import Home from "./pages/Home";
-// import sendToIPFS from '../utils/sendToIPFS';
-// import fetchFromIPFS from '../utils/fetchFromIPFS';
+import EncryptData from '../utils/EncryptData';
+import DecryptData from '../utils/DecryptData';
+// const ipfsClient = require("ipfs-http-client") ;
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import EditProtocol from "../pages/EditProtocol";
+import ReadProtocol from "../pages/ReadDocuments";
+import ReadDocuments from '../pages/ReadDocuments';
+import SendToIPFS from '../utils/SendToIPFS';
+import FetchFromIPFS from '../utils/FetchFromIPFS';
 // import ipfsConnection from '../utils/ipfsConnection';
 
 class Promoter extends React.Component {
@@ -15,16 +20,54 @@ class Promoter extends React.Component {
         protocolTreatmentList: '',
         protocoleCID: '',
         listCID: '',
-        protocolData: 0
+        protocolData: 0,
+        base64data: "",
+        filename: '',
+        data: ''
     }
+
+
+    handleFiles = async files => {
+        // encode the file to base64 and save it into state
+        this.setState({
+            filename: files.fileList[0].name
+        })
+
+        // send data to ipfs
+        let encryptedData = EncryptData(files.base64, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+
+        let cid = await SendToIPFS(encryptedData);
+        this.setState({ protocoleCID: cid });
+        console.log("CID FROM CODE =", this.state.protocoleCID);
+
+        // Fetch data from ipfs
+        let data = FetchFromIPFS(this.state.protocoleCID, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+
+        this.setState({ data: await data });
+
+        console.log("DATA FRO IPFS =", await data);
+
+    }
+
+
 
     onButtontreatmentListClick = async e => {
         e.preventDefault();
         console.log("DATA =",this.state.protocolDescription);
-        let encryptedData = encryptData(this.state.protocolDescription, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+        let encryptedData = EncryptData(this.state.protocolDescription, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
         console.log("ENCRYPTED DATA",encryptedData);
-        let decryptedData = decryptData(encryptedData, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+        let decryptedData = DecryptData(encryptedData, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
         console.log("DECRYPTED DATA =", decryptedData);
+
+        
+        // Connect IPFS
+        // Connect to local node
+        //const ipfs = ipfsClient("localhost", "5001", {protocol: 'http'});
+        // const ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
+        // Connect to Infura with public gateway
+        //const ipfs = ipfsClient({host: "ipfs.infura.io", port: "5001", protocol: 'https'});
+
+
 
         // let cidFromIPFS;
         // await sendToIPFS(encryptedData).then(res => {
@@ -74,68 +117,109 @@ class Promoter extends React.Component {
         let data = this.state.protocolData;
 
         return ( 
-            // <BrowserRouter>
-            // <Switch>
-            //     <Route path="/" exact component={Home} />
-            //     {/* <Route path="/editProtocol" exact component={editProtocol} />
-            //     <Route path="/readProtocol" exact component={readProtocol} /> */}
-            // </Switch>
-    
-            <div>
-                <Header
-                    role={this.props.role}
-                    account={this.props.account}
-                />
-
-                <h1>Protocol file description</h1>
-                <h4> {this.state.protocoleCID} </h4>
-                <textarea
-                    rows="6"
-                    cols="60"
-                    onChange={e => this.setState({ protocolDescription: e.target.value })}
-                />
-
-                <h1>Confidential treatment list</h1>
-                <h4> {this.state.listCID} </h4>
-                <textarea
-                    rows="6"
-                    cols="60"
-                    onChange={e => this.setState({ protocolTreatmentList: e.target.value })}
-                /> 
-                
-                <p></p>
-
-                <p>
-                    <button className="positive ui button" onClick={this.onButtontreatmentListClick}>
-                        Encrypt and upload to IPFS
-                    </button>
-                </p>
-
-                <h2> Protocols Data fetched from Ethereum Blockchain </h2>
-                <div className="table">
-                    <table className="ui tablet stackable table">
-                    <thead>
-                        <tr>
-                            <th>Protocol type</th>
-                            <th className="right aligned">Data</th>
-                        </tr>
-                    </thead>
-                        <tbody>
-                        {
-                        Object.entries(data).map(([key, value]) => 
-                            <tr key={key}>
-                            <td>{key}</td>
-                            <td className="right aligned">{value}</td>
-                            </tr>
-                        )}         
-                    </tbody>
-                    </table>
-                </div>
            
-            </div>
-            // </BrowserRouter>
+            <BrowserRouter>
+            <Switch>
+                <Route path="/" exact component={Home} />
+                <Route path="/EditProtocol" exact component={EditProtocol} />
+                <Route path="/ReadProtocol" exact component={ReadDocuments} />
+            </Switch>
+            </BrowserRouter>
+
+
+
         );
     }
 }
 
 export default Promoter;
+
+
+
+
+{/* <div>
+<div>
+<Header
+    role={this.props.role}
+    account = {this.props.account}
+/>
+<br></br>
+
+<ReactFileReader fileTypes={[".csv",".pdf",".zip"]} base64={true} handleFiles = {this.handleFiles}>
+    <button className="positive ui button">
+        Upload the protocole decsription file into IPFS
+    </button>
+</ReactFileReader>
+{this.state.filename}
+
+<h2>Protocole Description</h2>
+<br></br>
+<embed src={this.state.data}  type="application/pdf" width="50%" height="500px" scrolling = "no"></embed>
+{/* <embed src={this.state.file}  type="application/pdf" width="50%" height="850px"></embed> */}
+</div>
+
+
+
+
+
+
+
+<BrowserRouter>
+<Switch>
+    <Route path="/" exact component={Home} />
+    <Route path="/EditProtocol" exact component={EditProtocol} />
+    <Route path="/ReadProtocol" exact component={ReadDocuments} />
+</Switch>
+
+{/* <div>
+    <Header
+        role={this.props.role}
+        account={this.props.account}
+    />
+
+    <h1>Protocol file description</h1>
+    <h4> {this.state.protocoleCID} </h4>
+    <textarea
+        rows="6"
+        cols="60"
+        onChange={e => this.setState({ protocolDescription: e.target.value })}
+    />
+
+    <h1>Confidential treatment list</h1>
+    <h4> {this.state.listCID} </h4>
+    <textarea
+        rows="6"
+        cols="60"
+        onChange={e => this.setState({ protocolTreatmentList: e.target.value })}
+    /> 
+    
+    <p></p>
+
+    <p>
+        <button className="positive ui button" onClick={this.onButtontreatmentListClick}>
+            Encrypt and upload to IPFS
+        </button>
+    </p>
+
+    <h2> Protocols Data fetched from Ethereum Blockchain </h2>
+    <div className="table">
+        <table className="ui tablet stackable table">
+        <thead>
+            <tr>
+                <th>Protocol type</th>
+                <th className="right aligned">Data</th>
+            </tr>
+        </thead>
+            <tbody>
+            {
+            Object.entries(data).map(([key, value]) => 
+                <tr key={key}>
+                <td>{key}</td>
+                <td className="right aligned">{value}</td>
+                </tr>
+            )}         
+        </tbody>
+        </table>
+    </div>
+
+</div> */} */}

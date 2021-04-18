@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-function decryptData(data, ENCRYPTION_KEY) {
+function DecryptData(data, ENCRYPTION_KEY) {
     let textParts = data.split(':');
     let iv = Buffer.from(textParts.shift(), 'hex');
     let encryptedText = Buffer.from(textParts.join(':'), 'hex');
@@ -12,4 +12,4 @@ function decryptData(data, ENCRYPTION_KEY) {
     return decrypted.toString();
    }
 
-export default decryptData;
+export default DecryptData;

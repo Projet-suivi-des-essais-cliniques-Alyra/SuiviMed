@@ -3,7 +3,8 @@ import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
 // import Header from "./components/Header";
 import Promoter from "./components/Promoter";
-import encryptData from "./utils/encryptData";
+import EncryptData from "./utils/EncryptData";
+
 
 import "./App.css";
 
@@ -21,6 +22,10 @@ class App extends Component {
     currentAccount: null,
     protocolDescription: null,
     CIDs: null
+    // cidFromIPFS: null,
+    // cidFromEthereum: null,
+    // data: null,
+    // encodedData: null
   };
 
   componentDidMount = async () => {
@@ -105,7 +110,7 @@ class App extends Component {
     //this.setState({ protocolDescription: event.target.files[0] });
     //console.log(this.state.protocolDescription);
 
-    let encryptedData = encryptData(event.target.files[0], IV_LENGTH, ENCRYPTION_KEY);
+    let encryptedData = EncryptData(event.target.files[0], IV_LENGTH, ENCRYPTION_KEY);
     console.log(encryptedData);
 
   }
