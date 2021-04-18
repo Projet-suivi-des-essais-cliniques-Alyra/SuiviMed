@@ -4,7 +4,7 @@ import encryptData from '../utils/encryptData';
 import decryptData from '../utils/decryptData';
 // import { BrowserRouter, Switch, Route } from "react-router-dom";
 // import Home from "./pages/Home";
-import sendToIPFS from '../utils/sendToIPFS';
+// import sendToIPFS from '../utils/sendToIPFS';
 // import fetchFromIPFS from '../utils/fetchFromIPFS';
 // import ipfsConnection from '../utils/ipfsConnection';
 
