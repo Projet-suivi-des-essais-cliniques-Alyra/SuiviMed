@@ -1,12 +1,19 @@
+.navigation {
+    margin: 26px 0;
+    display: flex;
+}
 
 a {
     margin: 10px;
     padding: 10px;
     position: relative;
+    color: rgb(0, 0,0);
 }
 
 .nav-active {
-    background-color: rgb(255, 255, 255);
-    border-bottom: 0.4rem solid teal;
+    background-color: rgb(45, 158, 0);
+    border-bottom: 0.4rem solid rgb(45, 158, 0);
     cursor: not-allowed;
+    color: rgb(255, 255, 255);
 }
+
