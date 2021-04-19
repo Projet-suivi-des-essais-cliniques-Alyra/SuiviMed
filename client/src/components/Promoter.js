@@ -4,14 +4,14 @@ import Header from './Header';
 import EncryptData from '../utils/EncryptData';
 import DecryptData from '../utils/DecryptData';
 // const ipfsClient = require("ipfs-http-client") ;
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Home from "../pages/Home";
-import EditProtocol from "../pages/EditProtocol";
-import ReadProtocol from "../pages/ReadDocuments";
-import ReadDocuments from '../pages/ReadDocuments';
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import HomePromoter from "../pages/PROMOTER/HomePromoter";
+import ReadDataPromoter from '../pages/PROMOTER/ReadDataPromoter';
 import SendToIPFS from '../utils/SendToIPFS';
 import FetchFromIPFS from '../utils/FetchFromIPFS';
+import ProtocolPage from '../pages/PROMOTER/ProtocolPage';
 // import ipfsConnection from '../utils/ipfsConnection';
+
 
 class Promoter extends React.Component {
 
@@ -114,15 +114,14 @@ class Promoter extends React.Component {
     }
 
     render() {
-        let data = this.state.protocolData;
-
+        
         return ( 
-           
             <BrowserRouter>
+            <Redirect to="/PROMOTER/" />
             <Switch>
-                <Route path="/" exact component={Home} />
-                <Route path="/EditProtocol" exact component={EditProtocol} />
-                <Route path="/ReadProtocol" exact component={ReadDocuments} />
+                <Route path="/PROMOTER/" exact component={HomePromoter} />
+                <Route path="/PROMOTER/ProtocolPage" exact component={ProtocolPage} />
+                <Route path="/PROMOTER/ReadDataPromoter" exact component={ReadDataPromoter} />
             </Switch>
             </BrowserRouter>
 

@@ -4,11 +4,13 @@ import AccountContext from '../contexts/AccountContext';
 
 class Header extends React.Component {
     render() {
+        
         return (
             <div className="ui inverted brown clearing segment">
                 <h4 className="ui right floated header">
-                <AccountContext.Consumer>
-                    {(value) => <strong> {value.toLowerCase()} </strong>}
+                    <AccountContext.Consumer>
+                    
+                    {(value) => <strong> {value.toString().toLowerCase()} </strong>}
                     </AccountContext.Consumer>  
                 </h4>
                 <h4 className="ui left floated header">

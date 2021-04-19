@@ -3,6 +3,7 @@ import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
 // import Header from "./components/Header";
 import Promoter from "./components/Promoter";
+import Authority from "./components/Authority";
 import EncryptData from "./utils/EncryptData";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
@@ -127,24 +128,37 @@ class App extends Component {
 
 
   render() {
-    if (!this.state.web3) {
+    if (!this.state.web3 || this.state.role===undefined) {
+      const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
       return <div>Loading Web3, accounts, and contract...</div>;
     }
-    return (
-      <div className="ui container App">
+    else if (this.state.role==="PROMOTER") {
+      return (
+        <div className="ui container App">
+          <AccountContext.Provider value={this.state.currentAccount}>
+          <RoleContext.Provider value={this.state.role}>        
+            <Promoter
+              // balance={this.state.balance}
+              cids = {this.state.CIDs}
+              onProtocolClick = {this.onProtocoleButtonClick}
+            />
+          </RoleContext.Provider>
+          </AccountContext.Provider>
+        </div>
+      );
+    }
+    else if (this.state.role==="AUTHORITY") {
+      return (
+        <div className="ui container App">
         <AccountContext.Provider value={this.state.currentAccount}>
-        <RoleContext.Provider value={this.state.role}>        
-          <Promoter
-            // balance={this.state.balance}
-            cids = {this.state.CIDs}
-            // role = {this.state.role}
-            // account = {this.state.currentAccount}
-            onProtocolClick = {this.onProtocoleButtonClick}
-          />
+        <RoleContext.Provider value={this.state.role}>
+        <Authority />
         </RoleContext.Provider>
         </AccountContext.Provider>
-      </div>
-    );
+        </div>
+      );
+    }
+    else{ return <div> NOTHING </div>}
   }
 }
 
