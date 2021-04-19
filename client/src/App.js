@@ -4,8 +4,8 @@ import getWeb3 from "./getWeb3";
 // import Header from "./components/Header";
 import Promoter from "./components/Promoter";
 import EncryptData from "./utils/EncryptData";
-
-
+import RoleContext from './contexts/RoleContext';
+import AccountContext from './contexts/AccountContext';
 import "./App.css";
 
 const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
@@ -132,13 +132,17 @@ class App extends Component {
     }
     return (
       <div className="ui container App">
-        <Promoter
-          // balance={this.state.balance}
-          cids = {this.state.CIDs}
-          role = {this.state.role}
-          account = {this.state.currentAccount}
-          onProtocolClick = {this.onProtocoleButtonClick}
-        />
+        <AccountContext.Provider value={this.state.currentAccount}>
+        <RoleContext.Provider value={this.state.role}>        
+          <Promoter
+            // balance={this.state.balance}
+            cids = {this.state.CIDs}
+            // role = {this.state.role}
+            // account = {this.state.currentAccount}
+            onProtocolClick = {this.onProtocoleButtonClick}
+          />
+        </RoleContext.Provider>
+        </AccountContext.Provider>
       </div>
     );
   }

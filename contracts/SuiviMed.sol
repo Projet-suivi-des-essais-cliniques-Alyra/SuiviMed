@@ -133,10 +133,10 @@ contract SuiviMed is AccessControl {
             hasRole(PROMOTERADMIN, msg.sender),
             "You are not Promoter Admin!"
         );
-        // require(
-        //     !hasRole(PROMOTER, _addressPromoter),
-        //     "Address is already Promoter!"
-        // );
+        require(
+            !hasRole(PROMOTER, _addressPromoter),
+            "Address is already Promoter!"
+        );
         grantRole(PROMOTER, _addressPromoter);
         emit promoterAdded(_addressPromoter);
     }
