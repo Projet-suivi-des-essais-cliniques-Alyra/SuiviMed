@@ -7,6 +7,9 @@ import Authority from "./components/Authority";
 import EncryptData from "./utils/EncryptData";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
+import ProtocolsContext from './contexts/ProtocolsContext';
+import ContractContext from './contexts/ContractContext';
+
 import "./App.css";
 
 const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
@@ -22,7 +25,9 @@ class App extends Component {
     balance: null,
     currentAccount: null,
     protocolDescription: null,
-    CIDs: null
+    CIDs: null,
+    protocols:null,
+    done:false
     // cidFromIPFS: null,
     // cidFromEthereum: null,
     // data: null,
@@ -59,7 +64,8 @@ class App extends Component {
           web3,
           accounts,
           contract: instance,
-          currentAccount: accounts[0]
+          currentAccount: accounts[0],
+          protocols:[]
         },
         this.runExample
       );
@@ -73,19 +79,19 @@ class App extends Component {
   };
 
   runExample = async () => {
-    const { accounts, contract } = this.state;
+    const { currentAccount, contract, done } = this.state;
 
     // store the current account
     this.setCurrentAccount();
 
-    // Stores a given value, 5 by default.
-    //await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    // const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    //this.setState({ storageValue: response });
+    // if (done===false){
+    // await contract.methods.createProtocol("protocolDescriptionCID","protocolTreatmentsListID").send({from:currentAccount});
+    // this.setState({done:true});
+    // }
+    // recupere la liste des protocols
+    const protocols = await contract.methods.getProtocols().call();
+    console.log(protocols);
+    this.setState({ protocols: protocols });
   };
 
 
@@ -135,6 +141,8 @@ class App extends Component {
     else if (this.state.role==="PROMOTER") {
       return (
         <div className="ui container App">
+          <ContractContext.Provider value={this.state.contract}>
+          <ProtocolsContext.Provider value={this.state.protocols}>
           <AccountContext.Provider value={this.state.currentAccount}>
           <RoleContext.Provider value={this.state.role}>        
             <Promoter
@@ -144,17 +152,23 @@ class App extends Component {
             />
           </RoleContext.Provider>
           </AccountContext.Provider>
+          </ProtocolsContext.Provider>
+          </ContractContext.Provider>
         </div>
       );
     }
     else if (this.state.role==="AUTHORITY") {
       return (
         <div className="ui container App">
+          <ContractContext.Provider value={this.state.contract}>
+        <ProtocolsContext.Provider value={this.state.protocols}>
         <AccountContext.Provider value={this.state.currentAccount}>
         <RoleContext.Provider value={this.state.role}>
         <Authority />
         </RoleContext.Provider>
         </AccountContext.Provider>
+        </ProtocolsContext.Provider>
+        </ContractContext.Provider>
         </div>
       );
     }
