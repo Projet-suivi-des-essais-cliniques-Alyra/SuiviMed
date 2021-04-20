@@ -9,7 +9,7 @@ Voici une liste des bénéfices de l'implémentation de ce système sur la block
 - Notice d'avertissement pour les patients candidats d'un rapport automatiquement généré par le smart contrat sur les tests et les effets secondaires enregistrés au cours de l'essai clinique.
 - Limitation ou élimination des fraudes ou falsications par l'enregistrement de la données sur IPFS ainsi que d'un hash sur la blockchain pour vérifier son intégrité. 
 - Transparence des études pour les autorités de santé qui ont accès aux données enregistrées au fur et à mesure des essais, et conservation de l'historique des essais cliniques sur la blockchain et dans IPFS.
-- Limitation ou suppression des possibilités de corruption ou de biais, en décentralisant le contrôle du systeme et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
+- Limitation ou suppression des possibilités de corruption ou de biais, en décentralisant le contrôle du système et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
 
 # Fonctionalités:
 Le système est initialisé par un promoteur qui souhaite utiliser le système pour apporter de la transparence et de la confiance dans le processus de ses essais cliniques. Au moment du déploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designées comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
