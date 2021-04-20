@@ -9,19 +9,19 @@ Voici une liste des bénéfices de l'implémentation de ce système sur la block
 - Notice d'avertissement pour les patients candidats d'un rapport automatiquement généré par le smart contrat sur les tests et les effets secondaires enregistrés au cours de l'essai clinique.
 - Limitation ou élimination des fraudes ou falsications par l'enregistrement de la données sur IPFS ainsi que d'un hash sur la blockchain pour vérifier son intégrité. 
 - Transparence des études pour les autorités de santé qui ont accès aux données enregistrées au fur et à mesure des essais, et conservation de l'historique des essais cliniques sur la blockchain et dans IPFS.
-- Limitation ou suppression des possibilités de corruption ou de biais, en decentralisant le controle du systeme et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
+- Limitation ou suppression des possibilités de corruption ou de biais, en décentralisant le contrôle du système et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
 
 # Fonctionalités:
-Le système est initialisé par un promoteur qui souhaite utiliser le système pour apporter de la transparence et de la confiance dans le processus de ses essais cliniques. Au moment du deploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designées comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
+Le système est initialisé par un promoteur qui souhaite utiliser le système pour apporter de la transparence et de la confiance dans le processus de ses essais cliniques. Au moment du déploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designées comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
 
-Des promoteurs et des autorités peuvent être ajoutés grâce aux fonction "addPromoteurs()" et "addAuthorities()" accessibles uniquement par les promoteurs admins et autorités admins respectivement.
+Des promoteurs et des autorités peuvent être ajoutés grâce aux fonction "addPromoteurs()" et "addAuthorities()" accessibles uniquement par les promoteurs Admins et autorités Admins respectivement.
 
 Le processus est le suivant :
 
 Un promoteur crée un protocol pour un essai clinique. Du point de vue du smart contrat, ce protocol comporte deux parties qui seront cryptées différemmment pour contrôler l'accès de l'information:
 
 - (descriptionCID) une partie est relative à la description de l'étude et donne les méthodes d'investigation ainsi qu'une notice d'avertissement pour les patients qui souhaitent participer aux essais cliniques. Cette partie du document protocole est accessibles à toutes les personnes réunis dans un projet (promoteurs, autorités, investigateurs, patients).
-- (treatmentsListCID) l'autre partie est une annexe donnant la liste des numéros de patients et de leur traitements associés (soit le vrai traitement médical qui fait l'objet de l'étude, soit un placebo). Ce document est crypté pour n'être accessible que par les promoteurs et les autorités. Ce document est également stocké sur ipfs ainsi que son hash sur la blockchain.
+- (treatmentsListCID) l'autre partie est une annexe donnant la liste des numéros de patients et de leur traitements associés (soit le vrai traitement médical qui fait l'objet de l'étude, soit un placebo). Ce document est crypté pour n'être accessible que par les promoteurs et les autorités. Ce document est également stocké sur IPFS ainsi que son hash sur la blockchain.
 
 Ce protocole doit alors être soumis aux autorités pour être validé avant de pouvoir lancer les essais cliniques. Les autorités ont seules accès à la fonction "validateProtocol()" pour effectuer la validation.
 
@@ -39,13 +39,24 @@ La reprise des essais cliniques peut être décidée par l'accord commun des pro
 En cas de modification du protocole d'un essai clinique, le consentement d'un patient est de nouveau exigé pour pouvoir continuer les essais. Ainsi la fonction "updateProtocol()" retire le consentement des Patients concernés.
 
 # Installation et éxécution
-Le contrat sera déployé par le promoteur qui initialise le système en fournissant son adresse, qui sera designee comme promoteurAdmin, et l'adresse d'une autorite qui sera Admin pour le groupe autorité.
+Le contrat sera déployé par le promoteur qui initialise le système en fournissant son adresse, qui sera désignée comme promoteurAdmin, et l'adresse d'une autorité qui sera Admin pour le groupe autorité.  
 
 La bibliothèque @openzeppelin/contracts/access/AccessControl.sol doit être installée:
 
-npm install @openzeppelin/contracts
+__npm install @openzeppelin/contracts__
 
-ainsi qu'une bibliothèque de connexion à IPFS:
+Pour les tests la bibliotheque @openzeppelin/test-helpers:
 
-npm install ipfs-core
+__npm install @openzeppelin/test-helpers__
 
+Ainsi qu'une bibliothèque de connexion à IPFS:
+
+__npm install -s ipfs-mini__
+
+Puis, une bibliothèque pour la visualisation de fichier (pdf,doc,...):
+
+__npm install -s react-file-reader__
+
+Et, une bibliothèque pour le routage dans react:
+
+__npm install -s react-router-dom__
