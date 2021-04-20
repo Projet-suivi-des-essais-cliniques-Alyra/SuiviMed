@@ -1,0 +1,7 @@
+build
+node_modules
+client/src/contracts
+.env
+.~*
+.bu
+*_old.*

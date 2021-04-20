@@ -1,0 +1,64 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(12px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.table {
+  text-align: center;
+  margin-top: 60px;
+  margin-left: 25%;
+  width: 50%;
+}
+
+.head1 {
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+.protocol-btn {
+  width: 20%;
+  margin-left: 40%;
+}
+
+.send-protocol {
+  margin-top: 50px;
+}
+
+.protocol-warning {
+  width: 50%;
+  left: 25%;
+}
+
+.protocol-sent {
+  width: 50%;
+  left: 25%;
+  top: 50px;
+}
+
+.protocol-send-btn {
+  top: 120px;
+}
+
+.proj-creation {
+  width: 40%;
+  margin-left: 30%;
+  margin-top: 60px;
+}
