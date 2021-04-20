@@ -9,7 +9,7 @@ Voici une liste des bénéfices de l'implémentation de ce système sur la block
 - Notice d'avertissement pour les patients candidats d'un rapport automatiquement généré par le smart contrat sur les tests et les effets secondaires enregistrés au cours de l'essai clinique.
 - Limitation ou élimination des fraudes ou falsications par l'enregistrement de la données sur IPFS ainsi que d'un hash sur la blockchain pour vérifier son intégrité. 
 - Transparence des études pour les autorités de santé qui ont accès aux données enregistrées au fur et à mesure des essais, et conservation de l'historique des essais cliniques sur la blockchain et dans IPFS.
-- Limitation ou suppression des possibilités de corruption ou de biais, en décentralisant le controle du systeme et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
+- Limitation ou suppression des possibilités de corruption ou de biais, en décentralisant le contrôle du systeme et en contrôlant l'accès des données des participants suivant leur rôle dans le système. 
 
 # Fonctionalités:
 Le système est initialisé par un promoteur qui souhaite utiliser le système pour apporter de la transparence et de la confiance dans le processus de ses essais cliniques. Au moment du déploiement, l'adresse d'une autorité de santé doit être fournie. L'adresse du promoteur ainsi que celle de l'autorité seront designées comme les Admins du groupe des promoteurs et du groupe des autorités respectivement. 
@@ -43,16 +43,20 @@ Le contrat sera déployé par le promoteur qui initialise le système en fournis
 
 La bibliothèque @openzeppelin/contracts/access/AccessControl.sol doit être installée:
 
-npm install @openzeppelin/contracts
+__npm install @openzeppelin/contracts__
 
-ainsi qu'une bibliothèque de connexion à IPFS:
+Pour les tests la bibliotheque @openzeppelin/test-helpers:
 
-npm install -s ipfs-mini
+__npm install @openzeppelin/test-helpers__
+
+Ainsi qu'une bibliothèque de connexion à IPFS:
+
+__npm install -s ipfs-mini__
 
 Puis, une bibliothèque pour la visualisation de fichier (pdf,doc,...):
 
-npm install -s react-file-reader
+__npm install -s react-file-reader__
 
 Et, une bibliothèque pour le routage dans react:
 
-npm install -s react-router-dom
+__npm install -s react-router-dom__
