@@ -5,6 +5,7 @@ import Header from './Header';
 import Home from "../pages/Home";
 import ReadDocuments from '../pages/ReadDocuments';
 import CreateProject from './CreateProject';
+import CollectData from './CollectData';
 import EncryptData from '../utils/EncryptData';
 import SendToIPFS from '../utils/SendToIPFS';
 import FetchFromIPFS from '../utils/FetchFromIPFS';
@@ -56,7 +57,7 @@ import "../App.css";
     console.log(`The adress ${addr} has registered the protocol with id ${id}`);
 
     // Fetch cids from blockchain
-    let cids = await this.props.contract.methods.getProtocolCIDs(6)
+    let cids = await this.props.contract.methods.getProtocolCIDs(id)
       .call({ from: this.props.account });
     console.log("cids from Ethereum =", cids);
 
@@ -86,6 +87,7 @@ import "../App.css";
                   <Route path="/EditProtocol" exact component={EditProtocol} />
                   <Route path="/CreateProject" exact component={CreateProject} />
                   <Route path="/ReadProtocol" exact component={ReadDocuments} />
+                  <Route path="/CollectData" exact component={CollectData} />
                 </Switch>
             </BrowserRouter>
 

@@ -5,6 +5,8 @@ import getWeb3 from "./getWeb3";
 import Promoter from "./components/EditProtocol";
 import EditProtocol from "./components/EditProtocol";
 import CreateProject from "./components/CreateProject";
+import CollectData from './components/CollectData';
+import AddPatient from './components/AddPatient';
 import EncryptData from "./utils/EncryptData";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
@@ -137,7 +139,7 @@ class App extends Component {
         <AccountContext.Provider value={this.state.currentAccount}>
         <RoleContext.Provider value={this.state.role}> 
 
-          <CreateProject
+          <AddPatient
             // balance={this.state.balance}
             cids = {this.state.CIDs}
             contract = {this.state.contract}

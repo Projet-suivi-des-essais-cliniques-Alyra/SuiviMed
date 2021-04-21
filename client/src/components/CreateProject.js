@@ -5,6 +5,7 @@ import Header from './Header';
 import Home from "../pages/Home";
 import ReadDocuments from '../pages/ReadDocuments';
 import EditProtocol from './EditProtocol';
+import CollectData from './CollectData';
 import EncryptData from '../utils/EncryptData';
 import SendToIPFS from '../utils/SendToIPFS';
 import FetchFromIPFS from '../utils/FetchFromIPFS';
@@ -13,7 +14,7 @@ import "../App.css";
 class CreateProject extends Component {
     state = {
         protocolID: '',
-        promoterAddress: '',
+        investigatorAddress: '',
         confirmation: '',
         eventProjectID: '',
         eventProtocolID: '',
@@ -24,15 +25,15 @@ class CreateProject extends Component {
         e.preventDefault();
 
         // send cids to ethereum Blockchain  
-        const receipt = await this.props.contract.methods.createProject(this.state.protocolID, this.state.promoterAddress)
-        .send({ from: this.props.account });
+        const receipt = await this.props.contract.methods.createProject(this.state.protocolID, this.state.investigatorAddress)
+            .send({ from: this.props.account });
         console.log("RECEIPT =", receipt.events);        
 
         // managing events for alert
         this.setState({
-            eventInvestigatorAddress: await receipt.events.investigatorAdded.returnValues[0],
-            eventProjectID: receipt.events.projectCreation.returnValues[0],
-            eventProtocolID: receipt.events.projectCreation.returnValues[1]
+            eventInvestigatorAddress: receipt.events.investigatorAdded.returnValues[0],
+            eventProjectID:  receipt.events.projectCreation.returnValues[0],
+            eventProtocolID:  receipt.events.projectCreation.returnValues[1]
         });
 
         this.setState({ confirmation: 'confirmed' });
@@ -49,10 +50,11 @@ class CreateProject extends Component {
             <div>
                 <BrowserRouter>
                     <Switch>
-                    <Route path="/" exact component={Home} />
-                    <Route path="/EditProtocol" exact component={EditProtocol} />
-                    <Route path="/CreateProject" exact component={CreateProject} />
-                    <Route path="/ReadProtocol" exact component={ReadDocuments} />
+                        <Route path="/" exact component={Home} />
+                        <Route path="/EditProtocol" exact component={EditProtocol} />
+                        <Route path="/CreateProject" exact component={CreateProject} />
+                        <Route path="/ReadProtocol" exact component={ReadDocuments} />
+                        <Route path="/CollectData" exact component={CollectData} />
                     </Switch>
                 </BrowserRouter>
 
@@ -68,6 +70,7 @@ class CreateProject extends Component {
                                         type="text"
                                         name="id"
                                         placeholder="protocol ID"
+                                        required
                                         onChange = {e => this.setState({ protocolID: e.target.value} )}
                                     />
                                 </div>
@@ -77,7 +80,8 @@ class CreateProject extends Component {
                                         type="text"
                                         name="address"
                                         placeholder="Investigator address"
-                                        onChange = {e => this.setState({ promoterAddress: e.target.value })}
+                                        required
+                                        onChange = {e => this.setState({ investigatorAddress: e.target.value })}
                                     />
                                 </div>
                                 <button className="ui primary button" type="submit" onSubmit = {this.onFormSubmit}>
