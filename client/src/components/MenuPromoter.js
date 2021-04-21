@@ -11,10 +11,13 @@ const MenuPromoter = () => {
                 Home
             </NavLink>
             <NavLink exact to="/PROMOTER/ProtocolPage"  activeClassName="nav-active">
-                Edit
+                Protocol
+            </NavLink>
+            <NavLink exact to="/PROMOTER/ProjectPage"  activeClassName="nav-active">
+                Project
             </NavLink>
             <NavLink exact to="/PROMOTER/ReadDataPromoter"  activeClassName="nav-active">
-                Read
+                Read Data
             </NavLink>
         </div>
               

@@ -1,37 +1,23 @@
 import React, { Component } from "react";
 import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
-// import Header from "./components/Header";
 import Promoter from "./components/Promoter";
 import Authority from "./components/Authority";
-import EncryptData from "./utils/EncryptData";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
 import ProtocolsContext from './contexts/ProtocolsContext';
-import ContractContext from './contexts/ContractContext';
 
 import "./App.css";
 
-const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
-const IV_LENGTH = 16;
-
 class App extends Component {
   state = {
-    storageValue: 0,
     web3: null,
     accounts: null,
     role: null,
     contract: null,
     balance: null,
     currentAccount: null,
-    protocolDescription: null,
-    CIDs: null,
     protocols:null,
-    done:false
-    // cidFromIPFS: null,
-    // cidFromEthereum: null,
-    // data: null,
-    // encodedData: null
   };
 
   componentDidMount = async () => {
@@ -67,7 +53,7 @@ class App extends Component {
           currentAccount: accounts[0],
           protocols:[]
         },
-        this.runExample
+        this.run
       );
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -78,24 +64,19 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
+  run = async () => {
     const { currentAccount, contract, done } = this.state;
 
     // store the current account
     this.setCurrentAccount();
 
-    // if (done===false){
-    // await contract.methods.createProtocol("protocolDescriptionCID","protocolTreatmentsListID").send({from:currentAccount});
-    // this.setState({done:true});
-    // }
     // recupere la liste des protocols
     const protocols = await contract.methods.getProtocols().call();
-    console.log(protocols);
     this.setState({ protocols: protocols });
   };
 
 
-  //=============== setting the curent account ===============
+  // setting the current account
   setCurrentAccount = async () => {
 
     await window.ethereum.on('accountsChanged', (accounts) => {
@@ -111,28 +92,7 @@ class App extends Component {
     this.setState({role: await this.state.contract.methods.getRole(this.state.currentAccount).call()})
   }
 
-  onProtocolDescriptionUpload = event => {
-    console.log("THE FILE =", event.target.files[0]);
-
-    //this.setState({ protocolDescription: event.target.files[0] });
-    //console.log(this.state.protocolDescription);
-
-    let encryptedData = EncryptData(event.target.files[0], IV_LENGTH, ENCRYPTION_KEY);
-    console.log(encryptedData);
-
-  }
-
-  onProtocoleButtonClick = async (protocolDescriptionCID, protocolTreatmentsListID) => {
-    const { contract, currentAccount } = this.state;
-    console.log("CID PROTOCOL APP =", protocolDescriptionCID);
-    console.log("CID LIST APP =", protocolTreatmentsListID);
-    await contract.methods.createProtocol(protocolDescriptionCID,protocolTreatmentsListID).send({from:currentAccount});
-    this.setState({CIDs: await contract.methods.getProtocolCIDs(0).call({from:currentAccount})});
-
-    console.log("CIDS FROM ETHEREUM", this.state.CIDs);
-  }
-
-
+  
   render() {
     if (!this.state.web3 || this.state.role===undefined) {
       const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
@@ -141,34 +101,32 @@ class App extends Component {
     else if (this.state.role==="PROMOTER") {
       return (
         <div className="ui container App">
-          <ContractContext.Provider value={this.state.contract}>
           <ProtocolsContext.Provider value={this.state.protocols}>
-          <AccountContext.Provider value={this.state.currentAccount}>
-          <RoleContext.Provider value={this.state.role}>        
-            <Promoter
-              // balance={this.state.balance}
-              cids = {this.state.CIDs}
-              onProtocolClick = {this.onProtocoleButtonClick}
-            />
-          </RoleContext.Provider>
-          </AccountContext.Provider>
+            <AccountContext.Provider value={this.state.currentAccount}>
+              <RoleContext.Provider value={this.state.role}>        
+                <Promoter
+                  // balance={this.state.balance}
+                  onProtocolClick = {this.onProtocoleButtonClick}
+                  contract={this.state.contract}
+                />
+              </RoleContext.Provider>
+            </AccountContext.Provider>
           </ProtocolsContext.Provider>
-          </ContractContext.Provider>
         </div>
       );
     }
     else if (this.state.role==="AUTHORITY") {
       return (
-        <div className="ui container App">
-          <ContractContext.Provider value={this.state.contract}>
+        <div className="ui container App">     
         <ProtocolsContext.Provider value={this.state.protocols}>
-        <AccountContext.Provider value={this.state.currentAccount}>
-        <RoleContext.Provider value={this.state.role}>
-        <Authority />
-        </RoleContext.Provider>
-        </AccountContext.Provider>
+          <AccountContext.Provider value={this.state.currentAccount}>
+            <RoleContext.Provider value={this.state.role}>
+              <Authority 
+                contract={this.state.contract}
+              />
+            </RoleContext.Provider>
+          </AccountContext.Provider>
         </ProtocolsContext.Provider>
-        </ContractContext.Provider>
         </div>
       );
     }

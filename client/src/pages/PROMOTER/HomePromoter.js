@@ -3,21 +3,30 @@ import MenuPromoter from '../../components/MenuPromoter';
 import Header from '../../components/Header';
 import ProtocolsContext from '../../contexts/ProtocolsContext';
 import AccountContext from '../../contexts/AccountContext';
-import ContractContext from '../../contexts/ContractContext';
 
 import "../../styles/HomePromoter.css";
 
-const HomePromoter = () => {
+const HomePromoter = (props) => {
 
+  //Contexts and Hooks
   const protocolContext = useContext(ProtocolsContext);
-  const contractContext = useContext(ProtocolsContext);
   const currentAccount = useContext(AccountContext);
 
   const [termAgreement,setTermAgreement] = useState('');
+  const [termResume,setTermResume] = useState('');
   
+  console.log(props.contract)
+
+   const onResumeButtonClick = async (event) => {
+    event.preventDefault();
+    console.log(termResume)
+    await props.contract.methods.resumeAfterAlert(termResume).send({from:currentAccount});
+  }
+
   const onAgreementButtonClick = async (event) => {
     event.preventDefault();
-    await contractContext.methods.validateProtocol().send({from:currentAccount});
+    console.log(termAgreement)
+    await props.contract.methods.agreeOnResume(termAgreement).send({from:currentAccount});
   }
 
   return (
@@ -34,7 +43,7 @@ const HomePromoter = () => {
             <input
               type="text"
               value={termAgreement}
-              onChange={e => setTermAgreement({termAgreement:e.target.value})}
+              onChange={e => setTermAgreement(e.target.value)}
               placeholder="Protocol ID">
             </input>
           </div>
@@ -53,13 +62,18 @@ const HomePromoter = () => {
       <div className ="two fields">
         <div className="form-btn">
           <div className="field">
-            <input placeholder="Protocol ID" type="text"></input>
+            <input
+              type="text"
+              value={termResume}
+              onChange={e => setTermResume(e.target.value)}
+              placeholder="Protocol ID">
+            </input>
           </div>
             </div>
               <div className="btn">
                 <div className="field">
-                  <button className="ui primary button">
-                    Agree On Resume
+                  <button onClick={e => onResumeButtonClick(e)} className="ui primary button">
+                    Resume Clinical Trials for Protocol
                   </button>
                 </div>  
               </div>

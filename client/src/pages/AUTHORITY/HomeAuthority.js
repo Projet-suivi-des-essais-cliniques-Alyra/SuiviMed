@@ -1,24 +1,30 @@
-import React, {useContext,useState} from 'react';
+import React,{useContext,useState} from 'react';
 import MenuAuthority from '../../components/MenuAuthority';
 import Header from '../../components/Header';
 import ProtocolsContext from '../../contexts/ProtocolsContext';
 import AccountContext from '../../contexts/AccountContext';
-import ContractContext from '../../contexts/ContractContext';
 
 import "../../styles/HomeAuthority.css";
 
-const HomeAuthority = () => {
+const HomeAuthority = (props) => {
 
+  //Contexts and Hooks
   const protocolContext = useContext(ProtocolsContext);
-  const contractContext = useContext(ProtocolsContext);
   const currentAccount = useContext(AccountContext);
 
   const [termValidation,setTermValidation] = useState('');
+  const [termAgreement,setTermAgreement] = useState('');
   
   const onValidationButtonClick = async (event) => {
     event.preventDefault();
     console.log(termValidation)
-    await contractContext.methods.validateProtocol(termValidation).send({from:currentAccount});
+    await props.contract.methods.validateProtocol(termValidation).send({from:currentAccount});
+  }
+
+  const onAgreementButtonClick = async (event) => {
+    event.preventDefault();
+    console.log(termAgreement)
+    await props.contract.methods.agreeOnResume(termAgreement).send({from:currentAccount});
   }
   
   return (
@@ -55,13 +61,18 @@ const HomeAuthority = () => {
         <div className ="two fields">
           <div className="form-btn">
             <div className="field">
-              <input placeholder="Protocol ID" type="text"></input>
+              <input
+                type="text"
+                value={termAgreement}
+                onChange={e => setTermAgreement(e.target.value)}
+                placeholder="Protocol ID">
+              </input>
             </div>
           </div>
           <div className="btn">
             <div className="field">
-              <button className="ui primary button">
-                Agree On Resume
+              <button onClick={e => onAgreementButtonClick(e)} className="ui primary button">
+                Agree On Resume Clinical Trials for Protocol
               </button>
             </div>  
           </div>
