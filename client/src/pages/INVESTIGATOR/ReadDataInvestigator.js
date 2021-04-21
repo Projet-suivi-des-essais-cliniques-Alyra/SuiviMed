@@ -4,7 +4,8 @@ import Header from '../../components/Header';
 import ProtocolsContext from '../../contexts/ProtocolsContext';
 import AccountContext from '../../contexts/AccountContext';
 
-const HomeInvestigator = (props) => {
+
+const ReadDataInvestigator = (props) => {
 
   //Contexts and Hooks
   const protocolContext = useContext(ProtocolsContext);
@@ -21,4 +22,4 @@ const HomeInvestigator = (props) => {
   );
 };
 
-export default HomeInvestigator;
+export default ReadDataInvestigator;

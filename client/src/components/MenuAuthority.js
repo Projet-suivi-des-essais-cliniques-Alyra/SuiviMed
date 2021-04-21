@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {NavLink} from "react-router-dom";
 import "../styles/Menu.css";
 
@@ -18,6 +18,5 @@ const MenuAuthority = () => {
 
     );
 };
-
 
 export default MenuAuthority;

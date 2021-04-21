@@ -3,6 +3,7 @@ import SuiviMedContract from "./contracts/SuiviMed.json";
 import getWeb3 from "./getWeb3";
 import Promoter from "./components/Promoter";
 import Authority from "./components/Authority";
+import Investigator from "./components/Investigator";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
 import ProtocolsContext from './contexts/ProtocolsContext';
@@ -106,7 +107,6 @@ class App extends Component {
               <RoleContext.Provider value={this.state.role}>        
                 <Promoter
                   // balance={this.state.balance}
-                  onProtocolClick = {this.onProtocoleButtonClick}
                   contract={this.state.contract}
                 />
               </RoleContext.Provider>
@@ -127,6 +127,19 @@ class App extends Component {
             </RoleContext.Provider>
           </AccountContext.Provider>
         </ProtocolsContext.Provider>
+        </div>
+      );
+    }
+    else if (this.state.role==="INVESTIGATOR") {
+      return (
+        <div className="ui container App">     
+          <AccountContext.Provider value={this.state.currentAccount}>
+            <RoleContext.Provider value={this.state.role}>
+              <Investigator 
+                contract={this.state.contract}
+              />
+            </RoleContext.Provider>
+          </AccountContext.Provider>
         </div>
       );
     }

@@ -357,6 +357,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Investigators collects medical data of their patients using this function
+     * @param _patientID ID of the patient whose medical data are collected
+     * @param _newDataCID New Patient's medical data Content Identifier on IPFS
      */
     function collectData(uint256 _patientID, string memory _newDataCID) public {
         require(
@@ -380,6 +382,8 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice Investigators trigger an alert for a protocol using this function
+     * @param _patientID ID of the patient whose medical data are alarming
+     * @param _protocolID ID of the protocol concerned by the alert
      */
     function setAlertOn(uint256 _patientID, uint256 _protocolID) public {
         require(
@@ -393,6 +397,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice This function collects agreement of promoters and authorities to resume clinical trials
+     * @param _protocolID ID of the protocol with an alert concerned by agreement 
      */
     function agreeOnResume(uint256 _protocolID) public {
         require(
@@ -407,6 +412,7 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice This function allows resuming clinical trials with agreement of promoters and authorities
+     * @param _protocolID ID of the protocol to resume activity after an alert
      */
     function resumeAfterAlert(uint256 _protocolID) public {
         require(
@@ -426,6 +432,10 @@ contract SuiviMed is AccessControl {
         emit resumedAfterAlert(_protocolID);
     }
 
+    /**
+     * @notice This function allows retrieving data CIDs of a patient
+     * @param _patientID ID of the patient whose data CIDs need to be retrieved
+     */
     function getPatientDataCIDs(uint256 _patientID)
         public
         view
@@ -434,6 +444,10 @@ contract SuiviMed is AccessControl {
         return patients[_patientID].dataCID;
     }
 
+    /**
+     * @notice This function returns the role associated with the provided address
+     * @param _address Address of the person subject of the role inquiry
+     */
     function getRole(address _address) public view returns (string memory) {
         if (hasRole(PROMOTER, _address)) {
             return "PROMOTER";
@@ -446,6 +460,10 @@ contract SuiviMed is AccessControl {
         }
     }
 
+    /**
+     * @notice This function allows retrieving data CIDs of a protocol
+     * @param _protocolID ID of the protocol whose data CIDs need to be retrieved
+     */
     function getProtocolCIDs(uint256 _protocolID)
         public
         view
@@ -467,6 +485,9 @@ contract SuiviMed is AccessControl {
         return cids;
     }
 
+    /**
+     * @notice This function returns the protocols array
+     */
     function getProtocols() public view returns (Protocol[] memory) {
         return protocols;
     }

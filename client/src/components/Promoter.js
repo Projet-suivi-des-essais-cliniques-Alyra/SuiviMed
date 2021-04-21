@@ -17,10 +17,10 @@ class Promoter extends React.Component {
                 <Route exact path="/PROMOTER/">
                     <HomePromoter contract={this.props.contract}/>
                 </Route> 
-                <Route path="/PROMOTER/ProtocolPage">
+                <Route exact path="/PROMOTER/ProtocolPage">
                     <ProtocolPage  contract={this.props.contract}/>
                 </Route>
-                <Route path="/PROMOTER/ProjectPage">
+                <Route exact path="/PROMOTER/ProjectPage">
                     <ProjectPage  contract={this.props.contract}/>
                 </Route>
 

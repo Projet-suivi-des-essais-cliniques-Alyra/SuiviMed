@@ -4,19 +4,18 @@ const { expect } = require('../client/node_modules/chai');
 const SuiviMed = artifacts.require('SuiviMed');
 
 contract("SuiviMed", function (accounts) {
-    const root = accounts[0];
-    const promoterAdmin= accounts[1];
-    const authorityAdmin = accounts[2];
-    const promoter1 = accounts[3];
-    const authority1 = accounts[4];
-    const noRole = accounts[5];
-    const promoter2 = accounts[6];
-    const investigator1 = accounts[7];
-    const patient1 = accounts[8];
-    const patient2 = accounts[9];
-    const patient3 = accounts[10];
-    const investigator2 = accounts[11];
-    const authority2 = accounts[12];
+    const promoterAdmin= accounts[0];
+    const authorityAdmin = accounts[1];
+    const promoter1 = accounts[2];
+    const authority1 = accounts[3];
+    const noRole = accounts[4];
+    const promoter2 = accounts[5];
+    const investigator1 = accounts[6];
+    const patient1 = accounts[7];
+    const patient2 = accounts[8];
+    const patient3 = accounts[9];
+    const investigator2 = accounts[10];
+    const authority2 = accounts[11];
 
     // Before each unitary tests
     beforeEach(async function () {
@@ -33,8 +32,7 @@ contract("SuiviMed", function (accounts) {
         let bool = await this.SuiviMedInstance.hasRole(PROMOTER,promoter1);
         expect(bool).to.equal(true);
         // verifies that a promoter cannot be added twice
-        // await expectRevert.unspecified(this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin})); 
-        await this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin});
+        await expectRevert.unspecified(this.SuiviMedInstance.addPromoter(promoter1,{from:promoterAdmin})); 
     });
 
     it('Test verifies proper functionning of addPatient function', async function () {
@@ -115,7 +113,7 @@ contract("SuiviMed", function (accounts) {
         let firstPatientConsent = await firstPatient.consent; 
         let secondPatientConsent = await secondPatient.consent; 
         expect(firstPatientConsent).to.equal(true);
-        expect(firstPatientConsent).to.equal(true);
+        expect(secondPatientConsent).to.equal(true);
         //promoter1 updates protocol
         await this.SuiviMedInstance.updateProtocol(0,"newDescriptionCID","newTreatmentListCID",{from:promoter1});
         //after protocol update
@@ -126,6 +124,13 @@ contract("SuiviMed", function (accounts) {
         secondPatientConsent = await secondPatient.consent; 
         expect(firstPatientConsent).to.equal(false);
         expect(firstPatientConsent).to.equal(false);        
+        //verifies that patient(0), and only him, can give its consent again
+        await expectRevert(this.SuiviMedInstance.consent(0,{from:investigator1}),"you are not authorized to do that!");
+        await this.SuiviMedInstance.consent(0,{from:patient1})
+        patients = await this.SuiviMedInstance.patients; 
+        firstPatient = await patients(0);
+        firstPatientConsent = await firstPatient.consent;
+        expect(firstPatientConsent).to.equal(true);
     })
 
     it('Scenario verifying data of patients, whose consent were revoked, cannot be collected anymore', async function () {
