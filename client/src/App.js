@@ -153,7 +153,7 @@ class App extends Component {
         </div>
       );
     }
-    else{ return <div> NOTHING </div>}
+    else{ return <div> NOT PROMOTER, NOR AUTHORITY, NOR INVESTIGATOR </div>}
   }
 }
 
