@@ -34,7 +34,7 @@ class PatientDataCID extends Component {
         const base64data = await FetchFromIPFS(cid, 'fpbyr4386v8hpxdruppijkt3v6wayxmi'); 
         this.setState({
             message: 'ok',
-            base64data: base64data 
+            base64data: base64data
         });
 
         console.log("RECEIPT =", cid);
