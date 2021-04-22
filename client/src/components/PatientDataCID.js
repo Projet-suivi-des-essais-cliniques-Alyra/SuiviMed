@@ -91,7 +91,6 @@ class PatientDataCID extends Component {
                         </p>
                     </div>
                 }
-
                 
                 <embed src={this.state.base64data} type="application/pdf" width="50%" height="850px" scrolling = "no"></embed>
             </div>
