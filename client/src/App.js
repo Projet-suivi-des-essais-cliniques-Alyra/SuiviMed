@@ -7,10 +7,12 @@ import EditProtocol from "./components/EditProtocol";
 import CreateProject from "./components/CreateProject";
 import CollectData from './components/CollectData';
 import AddPatient from './components/AddPatient';
+import PatientDataCID from './components/PatientDataCID';
 import EncryptData from "./utils/EncryptData";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
 import "./App.css";
+import PatientData from "./components/AddPatient";
 
 const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
 const IV_LENGTH = 16;
@@ -139,7 +141,7 @@ class App extends Component {
         <AccountContext.Provider value={this.state.currentAccount}>
         <RoleContext.Provider value={this.state.role}> 
 
-          <AddPatient
+          <PatientDataCID
             // balance={this.state.balance}
             cids = {this.state.CIDs}
             contract = {this.state.contract}

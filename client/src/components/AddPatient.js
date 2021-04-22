@@ -123,7 +123,7 @@ class PatientData extends Component {
 
 
                         <div className ="field-addr">
-                        <label>Patient address</label>
+                            <label>Patient address</label>
                             <input
                                 type="text"
                                 name="id"
@@ -151,7 +151,7 @@ class PatientData extends Component {
                             <p>
                                 The patient <strong>{this.state.patientAddress}</strong> with ID 
                                 <strong>{this.state.eventPatientID}</strong> has been added to the project with ID
-                                <strong>{this.state.projectID}</strong>
+                                <strong>{this.state.eventProjectID}</strong>
                                 </p>
                         </div>
                 }

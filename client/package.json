@@ -9,6 +9,7 @@
     "ipfs-core": "^0.5.4",
     "ipfs-http-client": "^49.0.4",
     "ipfs-mini": "^1.1.5",
+    "js-base64": "^3.6.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-excel-renderer": "^1.1.0",

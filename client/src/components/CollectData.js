@@ -44,7 +44,7 @@ class CollectData extends Component {
                 })
             }
         });
-
+        
         // send data to ipfs
         let encryptedData = EncryptData(files.base64, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
 
