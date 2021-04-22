@@ -63,7 +63,7 @@ contract SuiviMed is AccessControl {
     /**
      * @dev for multisig agreement on resuming clinical trials.
      */
-    mapping(address => bool) agreedOnResume;
+    mapping(address => bool) agreedOnResume;   
 
     /**
      * @notice ces tableaux enregistrent les infos des projets ainsi que leurs participants sur la blockchain.
@@ -491,5 +491,57 @@ contract SuiviMed is AccessControl {
     function getProtocols() public view returns (Protocol[] memory) {
         return protocols;
     }
+
+    /**
+     * @notice This function returns the projects array
+     */
+    function getProjects() public view returns (Project[] memory) {
+        return projects;
+    }
+
+    /**
+     * @notice This function returns the patients array
+     * @param _projectID ID of the project whose caller's patients list is to be retrieved
+     */
+    function getPatientsInProject(uint _projectID) public view returns (uint[] memory) {
+         /**
+         * @dev Enough to verify the caller is investigator since he can only retrieve its own patients
+         */
+        require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
+        /**
+         * @dev "memory array pattern": use counter cause push is not allowed for memory array
+         */
+        uint[] memory projectInvestigatorPatientsIDs;
+        uint counter = 0;
+        for (
+            uint256 i = 0;
+            i <
+            projectIDToPatientsIDs[_projectID].length;
+            i++
+        ) {
+            if(patients[projectIDToPatientsIDs[_projectID][i]]
+                .investigatorAddress == msg.sender){
+                    projectInvestigatorPatientsIDs[counter]=projectIDToPatientsIDs[_projectID][i];
+                    counter++;
+                }
+        }
+
+        return projectInvestigatorPatientsIDs;
+    }
+
+    // function getProjectsIDSByInvestigator(address _investigatorAddress) public view returns (uint[] memory) {
+    //     /**
+    //      * @dev Enough to verify the caller is investigator since he can only retrieve its own patients
+    //      */
+    //     require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
+    
+    //     /**
+    //      * @dev "memory array pattern": use counter cause push is not allowed for memory array
+    //      */
+    //     uint[] memory projectsIDs;
+    //     uint counter = 0;
+
+
+    // }
 
 }

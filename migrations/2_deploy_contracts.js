@@ -9,8 +9,8 @@ const web3 = new Web3(provider);
 module.exports = async function (deployer) {
 	// const accounts = await web3.eth.getAccounts().catch((e) => {console.log(e);});
 	// const root = "0x5612951Caf1Ab7b46eed71045448A8f98695E901";
-  const promoterAdmin= "0xe9Aef4077CdCFb0Bb3EDB8dD6A1E3431CBf090D2";
-  const authorityAdmin = "0x2EA226AcD629fa25A1352C20a2e403e60cD7d64E";
+  const promoterAdmin= "0xF8D7cbeeA7B445053B18A852ffba0940Ac016196";
+  const authorityAdmin = "0x29D37be4C1cF4c8873aB819D11E320C67b619Ef2";
   //console.log("promoterAdmin=",promoterAdmin); // to check that accounts are retrieved
   deployer.deploy(SuiviMed, promoterAdmin, authorityAdmin,{from:promoterAdmin});
 };

@@ -9,7 +9,7 @@ import "../../styles/HomeAuthority.css";
 const HomeAuthority = (props) => {
 
   //Contexts and Hooks
-  const protocolContext = useContext(ProtocolsContext);
+  const protocolsContext = useContext(ProtocolsContext);
   const currentAccount = useContext(AccountContext);
 
   const [termValidation,setTermValidation] = useState('');
@@ -89,8 +89,8 @@ const HomeAuthority = (props) => {
             </tr>
           </thead>
           <tbody>
-            {protocolContext !== undefined && 
-            protocolContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
+            {protocolsContext !== undefined && 
+            protocolsContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
                 <tr  key={protocol.date}>                                     
                 <td >{id}</td>
                 <td >{protocol.validated ? "done" : "pending"}</td>

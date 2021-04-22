@@ -7,6 +7,7 @@ import Investigator from "./components/Investigator";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
 import ProtocolsContext from './contexts/ProtocolsContext';
+import ProjectsContext from './contexts/ProjectsContext';
 
 import "./App.css";
 
@@ -19,6 +20,7 @@ class App extends Component {
     balance: null,
     currentAccount: null,
     protocols:null,
+    projects:null
   };
 
   componentDidMount = async () => {
@@ -66,7 +68,7 @@ class App extends Component {
   };
 
   run = async () => {
-    const { currentAccount, contract, done } = this.state;
+    const { contract } = this.state;
 
     // store the current account
     this.setCurrentAccount();
@@ -74,6 +76,11 @@ class App extends Component {
     // recupere la liste des protocols
     const protocols = await contract.methods.getProtocols().call();
     this.setState({ protocols: protocols });
+
+    // recupere la liste des protocols
+    const projects = await contract.methods.getProjects().call();
+    this.setState({ projects: projects });
+
   };
 
 
@@ -96,7 +103,6 @@ class App extends Component {
   
   render() {
     if (!this.state.web3 || this.state.role===undefined) {
-      const ENCRYPTION_KEY = 'fpbyr4386v8hpxdruppijkt3v6wayxmi';
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     else if (this.state.role==="PROMOTER") {
@@ -132,14 +138,18 @@ class App extends Component {
     }
     else if (this.state.role==="INVESTIGATOR") {
       return (
-        <div className="ui container App">     
-          <AccountContext.Provider value={this.state.currentAccount}>
-            <RoleContext.Provider value={this.state.role}>
-              <Investigator 
-                contract={this.state.contract}
-              />
-            </RoleContext.Provider>
-          </AccountContext.Provider>
+        <div className="ui container App">   
+        <ProjectsContext.Provider value={this.state.projects}>
+          <ProtocolsContext.Provider value={this.state.protocols}>
+            <AccountContext.Provider value={this.state.currentAccount}>
+              <RoleContext.Provider value={this.state.role}>
+                <Investigator 
+                  contract={this.state.contract}
+                />
+              </RoleContext.Provider>
+            </AccountContext.Provider>
+          </ProtocolsContext.Provider>
+        </ProjectsContext.Provider>
         </div>
       );
     }

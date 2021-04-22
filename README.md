@@ -53,9 +53,10 @@ Ainsi qu'une bibliothèque de connexion à IPFS:
 
 __npm install -s ipfs-mini__
 
-Puis, une bibliothèque pour la visualisation de fichier (pdf,doc,...):
+Puis, des bibliothèques pour la visualisation des fichiers (pdf,excel,...):
 
 __npm install -s react-file-reader__
+__npm install -s react-excel-renderer__
 
 Et, une bibliothèque pour le routage dans react:
 

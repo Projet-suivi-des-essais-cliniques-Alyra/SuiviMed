@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import HomeInvestigator from "../pages/INVESTIGATOR/HomeInvestigator";
-import PatientsPage from '../pages/INVESTIGATOR/PatientsPage';
+import AddPatient from '../pages/INVESTIGATOR/AddPatient';
+import CollectData from '../pages/INVESTIGATOR/CollectData';
 import ReadDataInvestigator from '../pages/INVESTIGATOR/ReadDataInvestigator';
-
 
 class Investigator extends React.Component {
 
@@ -16,8 +16,11 @@ class Investigator extends React.Component {
                 <Route exact path="/INVESTIGATOR/">
                     <HomeInvestigator contract={this.props.contract}/>
                 </Route> 
-                <Route exact path="/INVESTIGATOR/PatientsPage">
-                    <PatientsPage  contract={this.props.contract}/>
+                <Route exact path="/INVESTIGATOR/AddPatient">
+                    <AddPatient  contract={this.props.contract}/>
+                </Route>
+                <Route exact path="/INVESTIGATOR/CollectData">
+                    <CollectData  contract={this.props.contract}/>
                 </Route>
                 <Route exact path="/INVESTIGATOR/ReadDataInvestigator">
                     <ReadDataInvestigator  contract={this.props.contract}/>

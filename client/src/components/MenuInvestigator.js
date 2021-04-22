@@ -10,8 +10,11 @@ const MenuInvestigator = () => {
             <NavLink exact to="/INVESTIGATOR/"  activeClassName="nav-active">
                 Home
             </NavLink>
-            <NavLink exact to="/INVESTIGATOR/PatientsPage"  activeClassName="nav-active">
-                Patients Page
+            <NavLink exact to="/INVESTIGATOR/AddPatient"  activeClassName="nav-active">
+                Add Patient
+            </NavLink>
+            <NavLink exact to="/INVESTIGATOR/CollectData"  activeClassName="nav-active">
+                Collect Data
             </NavLink>
             <NavLink exact to="/INVESTIGATOR/ReadDataInvestigator"  activeClassName="nav-active">
                 Read Data

@@ -9,15 +9,13 @@ import "../../styles/HomePromoter.css";
 const HomePromoter = (props) => {
 
   //Contexts and Hooks
-  const protocolContext = useContext(ProtocolsContext);
+  const protocolsContext = useContext(ProtocolsContext);
   const currentAccount = useContext(AccountContext);
 
   const [termAgreement,setTermAgreement] = useState('');
   const [termResume,setTermResume] = useState('');
   
-  console.log(props.contract)
-
-   const onResumeButtonClick = async (event) => {
+  const onResumeButtonClick = async (event) => {
     event.preventDefault();
     console.log(termResume)
     await props.contract.methods.resumeAfterAlert(termResume).send({from:currentAccount});
@@ -89,8 +87,8 @@ const HomePromoter = (props) => {
             </tr>
           </thead>
           <tbody>
-            {protocolContext !== undefined && 
-            protocolContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
+            {protocolsContext !== undefined && 
+            protocolsContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
                 <tr  key={protocol.date}>                                     
                 <td >{id}</td>
                 <td >{protocol.validated ? "done" : "pending"}</td>
