@@ -57,7 +57,7 @@ import "../../App.css";
     console.log(`The adress ${addr} has registered the protocol with id ${id}`);
 
     // Fetch cids from blockchain
-    let cids = await this.props.contract.methods.getProtocolCIDs(6).call({ from: this.context });
+    let cids = await this.props.contract.methods.getProtocolCIDs(id).call({ from: this.context });
     console.log("cids from Ethereum =", cids);
 
     

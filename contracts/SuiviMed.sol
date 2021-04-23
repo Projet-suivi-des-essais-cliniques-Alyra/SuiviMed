@@ -507,7 +507,7 @@ contract SuiviMed is AccessControl {
          /**
          * @dev Enough to verify the caller is investigator since he can only retrieve its own patients
          */
-        require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
+        // require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
         /**
          * @dev "memory array pattern": use counter cause push is not allowed for memory array
          */
@@ -529,19 +529,5 @@ contract SuiviMed is AccessControl {
         return projectInvestigatorPatientsIDs;
     }
 
-    // function getProjectsIDSByInvestigator(address _investigatorAddress) public view returns (uint[] memory) {
-    //     /**
-    //      * @dev Enough to verify the caller is investigator since he can only retrieve its own patients
-    //      */
-    //     require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
-    
-    //     /**
-    //      * @dev "memory array pattern": use counter cause push is not allowed for memory array
-    //      */
-    //     uint[] memory projectsIDs;
-    //     uint counter = 0;
-
-
-    // }
 
 }
