@@ -4,6 +4,8 @@ import getWeb3 from "./getWeb3";
 import Promoter from "./components/Promoter";
 import Authority from "./components/Authority";
 import Investigator from "./components/Investigator";
+import Patient from "./components/Patient";
+import NoRole from "./components/NoRole";
 import RoleContext from './contexts/RoleContext';
 import AccountContext from './contexts/AccountContext';
 import ProtocolsContext from './contexts/ProtocolsContext';
@@ -109,7 +111,7 @@ class App extends Component {
     if (!this.state.web3 || this.state.role===undefined) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
-    else if (this.state.role==="PROMOTER") {
+    else if (this.state.role==="PROMOTERADMIN" || this.state.role==="PROMOTER") {
       return (
         <div className="ui container App">
           <ProtocolsContext.Provider value={this.state.protocols}>
@@ -125,7 +127,7 @@ class App extends Component {
         </div>
       );
     }
-    else if (this.state.role==="AUTHORITY") {
+    else if (this.state.role==="AUTHORITYADMIN" || this.state.role==="AUTHORITY") {
       return (
         <div className="ui container App">     
         <ProtocolsContext.Provider value={this.state.protocols}>
@@ -157,7 +159,28 @@ class App extends Component {
         </div>
       );
     }
-    else{ return <div> YOU ARE NOT PROMOTER, NOR AUTHORITY, NOR INVESTIGATOR, WE CAN ADD YOU. SEND US YOUR ROPSTEN ADDRESS AT JEANLOUISLANUIT@HOTMAIL.COM </div>}
+    else if (this.state.role==="PATIENT") {
+      return (
+        <div className="ui container App">     
+          <AccountContext.Provider value={this.state.currentAccount}>
+            <RoleContext.Provider value={this.state.role}>
+              <Patient
+                contract={this.state.contract}
+              />
+            </RoleContext.Provider>
+          </AccountContext.Provider>
+        </div>
+      );
+    }
+    else{ return <div className="ui container App">     
+          <AccountContext.Provider value={this.state.currentAccount}>
+            <RoleContext.Provider value={this.state.role}>
+              <NoRole
+                contract={this.state.contract}
+              />
+            </RoleContext.Provider>
+          </AccountContext.Provider>
+        </div>}
   }
 }
 

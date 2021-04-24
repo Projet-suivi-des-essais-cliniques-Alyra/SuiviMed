@@ -123,7 +123,7 @@ class CollectData extends Component {
                     </thead>
                         <tbody>
                         {
-                            this.state.message !== ''
+                            this.state.message === ''
                             ? 
                                 <div className="ui positive message protocol-sent">
                                     <i className="close icon"></i>

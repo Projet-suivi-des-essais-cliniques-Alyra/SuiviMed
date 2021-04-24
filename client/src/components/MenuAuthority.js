@@ -13,6 +13,9 @@ const MenuAuthority = () => {
             <NavLink exact to="/AUTHORITY/ReadDataAuthority"  activeClassName="nav-active">
                 Read Data
             </NavLink>
+            <NavLink exact to="/AUTHORITY/PeoplePageAuthority"  activeClassName="nav-active">
+                Add People
+            </NavLink>
         </div>
               
 

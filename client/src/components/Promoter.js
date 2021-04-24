@@ -4,7 +4,7 @@ import HomePromoter from "../pages/PROMOTER/HomePromoter";
 import ProtocolPage from '../pages/PROMOTER/ProtocolPage';
 import ProjectPage from '../pages/PROMOTER/ProjectPage';
 import ReadDataPromoter from '../pages/PROMOTER/ReadDataPromoter';
-
+import PeoplePagePromoter from '../pages/PROMOTER/PeoplePagePromoter';
 
 class Promoter extends React.Component {
 
@@ -23,8 +23,10 @@ class Promoter extends React.Component {
                 <Route exact path="/PROMOTER/ProjectPage">
                     <ProjectPage  contract={this.props.contract}/>
                 </Route>
-
                 <Route path="/PROMOTER/ReadDataPromoter" exact component={ReadDataPromoter} />
+                <Route exact path="/PROMOTER/PeoplePagePromoter">
+                    <PeoplePagePromoter  contract={this.props.contract}/>
+                </Route>
             </Switch>
             </BrowserRouter>
 

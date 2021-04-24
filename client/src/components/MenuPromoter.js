@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import {NavLink} from "react-router-dom";
 import "../styles/Menu.css";
 
@@ -18,6 +18,9 @@ const MenuPromoter = () => {
             </NavLink>
             <NavLink exact to="/PROMOTER/ReadDataPromoter"  activeClassName="nav-active">
                 Read Data
+            </NavLink>
+            <NavLink exact to="/PROMOTER/PeoplePagePromoter"  activeClassName="nav-active">
+                Add People
             </NavLink>
         </div>
               

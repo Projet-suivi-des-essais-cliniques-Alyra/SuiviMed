@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import HomeAuthority from "../pages/AUTHORITY/HomeAuthority";
 import ReadDataAuthority from '../pages/AUTHORITY/ReadDataAuthority';
+import PeoplePageAuthority from '../pages/AUTHORITY/PeoplePageAuthority';
 
 class Authority extends React.Component {
 
@@ -15,8 +16,10 @@ class Authority extends React.Component {
                 <Route exact path="/AUTHORITY/">
                     <HomeAuthority contract={this.props.contract}/>
                 </Route>
-                {/* <Route exact path="/AUTHORITY/" component={HomeAuthority} /> */}
                 <Route path="/AUTHORITY/ReadDataAuthority" exact component={ReadDataAuthority} />
+                <Route exact path="/AUTHORITY/PeoplePageAuthority">
+                    <PeoplePageAuthority contract={this.props.contract}/>
+                </Route>
             </Switch>
             </BrowserRouter>
         )

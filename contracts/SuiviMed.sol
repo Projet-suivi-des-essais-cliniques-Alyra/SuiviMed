@@ -17,6 +17,7 @@ contract SuiviMed is AccessControl {
     bytes32 public constant PROMOTER = keccak256("PROMOTER");
     bytes32 public constant PROMOTERADMIN = keccak256("PROMOTERADMIN");
     bytes32 public constant INVESTIGATOR = keccak256("INVESTIGATOR");
+    bytes32 public constant PATIENT = keccak256("PATIENT");
 
     enum Status {ACTIVE, SUSPENDED, COMPLETED}
 
@@ -113,6 +114,10 @@ contract SuiviMed is AccessControl {
          * @dev Set PROMOTER as Admins of INVESTIGATOR.
          */
         _setRoleAdmin(INVESTIGATOR, PROMOTER);
+        /**
+         * @dev Set INVESTIGATOR as Admins of PATIENT.
+         */
+        _setRoleAdmin(PATIENT,INVESTIGATOR);
         /**
          * @dev Set second address to be Authority and admin of Authorities.
          */
@@ -321,6 +326,7 @@ contract SuiviMed is AccessControl {
         uint256 _patientID = patients.length - 1;
         patients[_patientID].dataCID.push(_dataCID);
         // projectIDToPatientsIDs[_projectID].push(_patientID);
+        grantRole(PATIENT, _patientAddress);
         emit patientAdded(_patientID, _projectID);
     }
 
@@ -451,15 +457,19 @@ contract SuiviMed is AccessControl {
      * @param _address Address of the person subject of the role inquiry
      */
     function getRole(address _address) public view returns (string memory) {
-        if (hasRole(PROMOTER, _address)) {
+        if (hasRole(PROMOTERADMIN, _address)) {
+            return "PROMOTERADMIN";
+        } else if (hasRole(PROMOTER, _address)) {
             return "PROMOTER";
+        } else if (hasRole(AUTHORITYADMIN, _address)) {
+            return "AUTHORITYADMIN";
         } else if (hasRole(AUTHORITY, _address)) {
             return "AUTHORITY";
         } else if (hasRole(INVESTIGATOR, _address)) {
             return "INVESTIGATOR";
-        } else {
-        return "NOROLE";
-        }
+        } else if (hasRole(PATIENT, _address)) {
+            return "PATIENT";
+        } else { return "NOROLE";}
     }
 
     /**
