@@ -19,7 +19,8 @@ class App extends Component {
     balance: null,
     currentAccount: null,
     protocols:null,
-    projects:null
+    projects:null,
+    patients:null
   };
 
   componentDidMount = async () => {
@@ -80,6 +81,10 @@ class App extends Component {
     const projects = await contract.methods.getProjects().call();
     this.setState({ projects: projects });
 
+    // recupere la liste des patients
+    const patients = await contract.methods.getPatients().call();
+    this.setState({ patients: patients });
+
   };
 
 
@@ -95,7 +100,7 @@ class App extends Component {
         }
       });
     });
-
+    
     this.setState({role: await this.state.contract.methods.getRole(this.state.currentAccount).call()})
   }
 
@@ -144,6 +149,7 @@ class App extends Component {
                 <Investigator 
                   contract={this.state.contract}
                   projects={this.state.projects}
+                  patients={this.state.patients}
                 />
               </RoleContext.Provider>
             </AccountContext.Provider>
@@ -151,7 +157,7 @@ class App extends Component {
         </div>
       );
     }
-    else{ return <div> NOT PROMOTER, NOR AUTHORITY, NOR INVESTIGATOR </div>}
+    else{ return <div> YOU ARE NOT PROMOTER, NOR AUTHORITY, NOR INVESTIGATOR, WE CAN ADD YOU. SEND US YOUR ROPSTEN ADDRESS AT JEANLOUISLANUIT@HOTMAIL.COM </div>}
   }
 }
 

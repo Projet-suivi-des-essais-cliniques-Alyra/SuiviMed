@@ -53,7 +53,7 @@ contract SuiviMed is AccessControl {
     /**
      * @dev to keep track which patients were added to a project.
      */
-    mapping(uint256 => uint256[]) projectIDToPatientsIDs;
+    // mapping(uint256 => uint256[]) projectIDToPatientsIDs;
 
     /**
      * @dev to keep track which project is associated with a protocol.
@@ -204,6 +204,53 @@ contract SuiviMed is AccessControl {
         emit protocolCreation(msg.sender, _protocolID);
     }
 
+    // /**
+    //  * @notice A protocol can be updated by its promoter owner with this function.
+    //  * This function forces patients to reconsider the protocol and renew their consent.
+    //  * @param _protocolID ID of the protocol to be updated.
+    //  * @param _newDescriptionCID Content Identifier of the description part of the updated protocol on IPFS
+    //  * @param _newTreatmentsListCID Content Identifier of the treatment list part of the updated protocol on IPFS
+    //  */
+    // function updateProtocol(
+    //     uint256 _protocolID,
+    //     string memory _newDescriptionCID,
+    //     string memory _newTreatmentsListCID
+    // ) public {
+    //     require(
+    //         protocols[_protocolID].promoterAddress == msg.sender,
+    //         "You are not allowed to update the protocol!"
+    //     );
+    //     protocols[_protocolID].descriptionCID = _newDescriptionCID;
+    //     protocols[_protocolID].treatmentsListCID = _newTreatmentsListCID;
+    //     protocols[_protocolID].validated = false;
+    //     for (
+    //         uint256 i = 0;
+    //         i <
+    //         projectIDToPatientsIDs[protocolIDToProjectID[_protocolID]].length;
+    //         i++
+    //     ) {
+    //         patients[
+    //             projectIDToPatientsIDs[protocolIDToProjectID[_protocolID]][i]
+    //         ]
+    //             .consent = false;
+    //     }
+    //     emit protocolUpdated(_protocolID);
+    // }
+
+
+    // /**
+    //  * @notice Patients can renew their consent using this function
+    //  * @param _patientID ID of the patient renewing his/her consentement
+    //  */
+    // function consent(uint256 _patientID) public {
+    //     require(
+    //         patients[_patientID].patientAddress == msg.sender,
+    //         "you are not authorized to do that!"
+    //     );
+    //     patients[_patientID].consent = true;
+    //     emit newConsent(_patientID);
+    // }
+
     /**
      * @notice Promoters can create new projects with this function
      * @param _protocolID ID of the protocol investigated in the project.
@@ -214,7 +261,7 @@ contract SuiviMed is AccessControl {
     {
         require(hasRole(PROMOTER, msg.sender), "You are not Promoter!");
         require(
-            protocols[_protocolID].validated = true,
+            protocols[_protocolID].validated == true,
             "This protocol has not been validated!"
         );
         grantRole(INVESTIGATOR, _investigatorAddress);
@@ -241,38 +288,6 @@ contract SuiviMed is AccessControl {
         emit protocolValidation(_protocolID, msg.sender);
     }
 
-    /**
-     * @notice A protocol can be updated by its promoter owner with this function.
-     * This function forces patients to reconsider the protocol and renew their consent.
-     * @param _protocolID ID of the protocol to be updated.
-     * @param _newDescriptionCID Content Identifier of the description part of the updated protocol on IPFS
-     * @param _newTreatmentsListCID Content Identifier of the treatment list part of the updated protocol on IPFS
-     */
-    function updateProtocol(
-        uint256 _protocolID,
-        string memory _newDescriptionCID,
-        string memory _newTreatmentsListCID
-    ) public {
-        require(
-            protocols[_protocolID].promoterAddress == msg.sender,
-            "You are not allowed to update the protocol!"
-        );
-        protocols[_protocolID].descriptionCID = _newDescriptionCID;
-        protocols[_protocolID].treatmentsListCID = _newTreatmentsListCID;
-        protocols[_protocolID].validated = false;
-        for (
-            uint256 i = 0;
-            i <
-            projectIDToPatientsIDs[protocolIDToProjectID[_protocolID]].length;
-            i++
-        ) {
-            patients[
-                projectIDToPatientsIDs[protocolIDToProjectID[_protocolID]][i]
-            ]
-                .consent = false;
-        }
-        emit protocolUpdated(_protocolID);
-    }
 
     /**
      * @notice Investigators can recruit new patients with this function and initially register their consent
@@ -305,7 +320,7 @@ contract SuiviMed is AccessControl {
         patients.push(_patient);
         uint256 _patientID = patients.length - 1;
         patients[_patientID].dataCID.push(_dataCID);
-        projectIDToPatientsIDs[_projectID].push(_patientID);
+        // projectIDToPatientsIDs[_projectID].push(_patientID);
         emit patientAdded(_patientID, _projectID);
     }
 
@@ -327,19 +342,6 @@ contract SuiviMed is AccessControl {
             }
         }
         return false;
-    }
-
-    /**
-     * @notice Patients can renew their consent using this function
-     * @param _patientID ID of the patient renewing his/her consentement
-     */
-    function consent(uint256 _patientID) public {
-        require(
-            patients[_patientID].patientAddress == msg.sender,
-            "you are not authorized to do that!"
-        );
-        patients[_patientID].consent = true;
-        emit newConsent(_patientID);
     }
 
     /**
@@ -501,33 +503,9 @@ contract SuiviMed is AccessControl {
 
     /**
      * @notice This function returns the patients array
-     * @param _projectID ID of the project whose caller's patients list is to be retrieved
      */
-    function getPatientsInProject(uint _projectID) public view returns (uint[] memory) {
-         /**
-         * @dev Enough to verify the caller is investigator since he can only retrieve its own patients
-         */
-        // require(hasRole(INVESTIGATOR, msg.sender), "You are not Investigator!");
-        /**
-         * @dev "memory array pattern": use counter cause push is not allowed for memory array
-         */
-        uint[] memory projectInvestigatorPatientsIDs;
-        uint counter = 0;
-        for (
-            uint256 i = 0;
-            i <
-            projectIDToPatientsIDs[_projectID].length;
-            i++
-        ) {
-            if(patients[projectIDToPatientsIDs[_projectID][i]]
-                .investigatorAddress == msg.sender){
-                    projectInvestigatorPatientsIDs[counter]=projectIDToPatientsIDs[_projectID][i];
-                    counter++;
-                }
-        }
-
-        return projectInvestigatorPatientsIDs;
+    function getPatients() public view returns (Patient[] memory) {
+        return patients;
     }
-
 
 }

@@ -14,7 +14,10 @@ class Investigator extends React.Component {
             <Redirect to="/INVESTIGATOR/" />
             <Switch>
                 <Route exact path="/INVESTIGATOR/">
-                    <HomeInvestigator contract={this.props.contract} projects={this.props.projects}/>
+                    <HomeInvestigator
+                     contract={this.props.contract}
+                     projects={this.props.projects}
+                     patients={this.props.patients}/>
                 </Route> 
                 <Route exact path="/INVESTIGATOR/AddPatient">
                     <AddPatient  contract={this.props.contract}/>

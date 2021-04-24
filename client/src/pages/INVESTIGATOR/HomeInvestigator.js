@@ -23,6 +23,23 @@ const HomeInvestigator = (props) => {
     else{return null;}
   }
 
+  // determine la liste des patients de l'investigator par ID dans le project
+  const patientIDsOfInvestigatorInProject = (_projectID) =>{
+    if (props.patients!==null){  
+      let patientsInProject=[];
+      let patientIDInProject=0;
+      for (let i=0; i < props.patients.length; i++) {
+        if (props.patients[i].projectID == _projectID) {
+          if(props.patients[i].investigatorAddress==String(currentAccount)) {   
+            patientsInProject.push(patientIDInProject);
+          } 
+          patientIDInProject++;      
+        }
+      }
+      return patientsInProject.toString();
+    }
+  }
+
   //select projects of investigator
   const projectsTab=[];
   if (props.projects!==null){  
@@ -33,17 +50,13 @@ const HomeInvestigator = (props) => {
               <td >{i}</td>
               <td>{props.projects[i].protocolID}</td>
               <td >{renderStatus(props.projects[i].status)}</td>
+              <td>{patientIDsOfInvestigatorInProject(i)}</td>
           </tr>
         )
       }
     }
   }
    
-  // recupere la liste des patients de l'investigator
-  // const patientsByProject =  async (projectID) => {
-  //   let patients = await props.contract.methods.getPatientsInProject(projectID).call();
-  //   return patients
-  // }
 
   const onAlertButtonClick = async (event) => {
     event.preventDefault();
@@ -95,8 +108,9 @@ const HomeInvestigator = (props) => {
           <thead>
             <tr>
               <th>Project ID</th>
-              <th>Protocol ID</th>
+              <th>Trial Master File (Protocol ID)</th>
               <th>Status</th>
+              <th>Patients ID</th>
             </tr>
           </thead>
           <tbody>
