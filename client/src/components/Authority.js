@@ -16,7 +16,9 @@ class Authority extends React.Component {
                 <Route exact path="/AUTHORITY/">
                     <HomeAuthority contract={this.props.contract}/>
                 </Route>
-                <Route path="/AUTHORITY/ReadDataAuthority" exact component={ReadDataAuthority} />
+                <Route exact path="/AUTHORITY/ReadDataAuthority">
+                <ReadDataAuthority contract={this.props.contract}/>
+                </Route>
                 <Route exact path="/AUTHORITY/PeoplePageAuthority">
                     <PeoplePageAuthority contract={this.props.contract}/>
                 </Route>

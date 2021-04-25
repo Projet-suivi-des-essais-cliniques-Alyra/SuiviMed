@@ -59,7 +59,7 @@ class ProjectPage extends Component {
                         <div className="proj-creation">
                             <form className = "ui form" onSubmit={this.onFormSubmit}>
                                 <div className ="field">
-                                    <label>Protocole ID</label>
+                                    <label>Protocol ID</label>
                                     <input
                                         type="text"
                                         name="id"

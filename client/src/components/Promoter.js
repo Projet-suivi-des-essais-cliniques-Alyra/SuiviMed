@@ -23,7 +23,9 @@ class Promoter extends React.Component {
                 <Route exact path="/PROMOTER/ProjectPage">
                     <ProjectPage  contract={this.props.contract}/>
                 </Route>
-                <Route path="/PROMOTER/ReadDataPromoter" exact component={ReadDataPromoter} />
+                <Route exact path="/PROMOTER/ReadDataPromoter">
+                    <ReadDataPromoter contract={this.props.contract}/>
+                </Route>
                 <Route exact path="/PROMOTER/PeoplePagePromoter">
                     <PeoplePagePromoter  contract={this.props.contract}/>
                 </Route>

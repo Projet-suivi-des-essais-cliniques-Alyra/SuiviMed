@@ -89,13 +89,13 @@ import "../../App.css";
               Protocol Page
             </div>
 
-            <h2 className="head1">Send the protocole to autorithies for validation</h2>
+            <h2 className="head1">Send the protocol to autorithies for validation</h2>
 
             <div className = "protocol-btn">
               <ReactFileReader fileTypes={[".csv",".pdf",".zip"]} base64={true} handleFiles = {this.handleFiles}>
                 
                 <button className="ui brown button">
-                  Select the protocole file
+                  Select the protocol file
                 </button>
               </ReactFileReader>
             </div>
@@ -106,7 +106,7 @@ import "../../App.css";
               <div className="send-protocol">
                 <div className="ui warning message protocol-warning">
                   <div className="header">
-                    Your are about to send the protocole in file
+                    Your are about to send the protocol in file
                     {this.state.filename} for validation.
                   </div>
                   Click the button bellow to send.

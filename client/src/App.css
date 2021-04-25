@@ -27,3 +27,74 @@
   margin-left: 25%;
   width: 50%;
 }
+
+
+.head1 {
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+.head-patient {
+  margin-top: 60px;
+  margin-bottom: 40px;
+  margin-left: 20%;
+  width: 60%;
+}
+
+.protocol-btn {
+  width: 20%;
+  margin-left: 40%;
+}
+
+.send-protocol {
+  margin-top: 50px;
+}
+
+.protocol-warning {
+  width: 50%;
+  left: 25%;
+}
+
+.protocol-sent {
+  width: 50%;
+  left: 25%;
+  top: 50px;
+}
+
+.protocol-send-btn {
+  top: 120px;
+}
+
+.proj-creation {
+  width: 40%;
+  margin-left: 30%;
+  margin-top: 60px;
+}
+
+.data-collection {
+  width: 40%;
+  margin-left: 30%;
+  margin-top: 60px;
+}
+
+.patient-file {
+  margin-bottom: 40px;
+}
+
+.field-id {
+  width: 20%;
+  margin-left: 40%;
+  margin-bottom: 20px;
+}
+
+.field-addr {
+  width: 80%;
+  margin-left: 10%;
+  margin-bottom: 30px;
+}
+
+.patient-ID {
+  width: 10%;
+  margin-left: 45%;
+  margin-bottom: 20px;
+}
