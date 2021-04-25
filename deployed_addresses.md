@@ -63,3 +63,67 @@ Summary
 =======
 > Total deployments:   2
 > Final cost:          0.07025474 ETH
+
+# Latest version of smart contrat with patients and all roles
+https://ropsten.etherscan.io/address/0x53A50c1009bfC9b839542514a8DBC5aA0Ab34549
+
+
+Starting migrations...
+======================
+> Network name:    'ropsten'
+> Network id:      3
+> Block gas limit: 22093627 (0x1511f3b)
+
+
+1_initial_migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > transaction hash:    0xc45bc7631c0a497df9420193b73042c629ed4b172997fa43816bab2adeaed844
+   > Blocks: 1            Seconds: 24
+   > contract address:    0xECd33A8dB389cb9a7e073EC8b94AF88BA3F816a9
+   > block number:        10104268
+   > block timestamp:     1619305749
+   > account:             0x48dF73d1AaAb29241DDeC590B68FaFfb365Ec68E
+   > balance:             2.1946528103
+   > gas used:            154235 (0x25a7b)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.0030847 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:           0.0030847 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Replacing 'SuiviMed'
+   --------------------
+   > transaction hash:    0xf9d85fcb96bfe89195ae9a3c002cd8c277a252fc8c2f18874f09b3f37c586d00
+   > Blocks: 0            Seconds: 40
+   > contract address:    0x53A50c1009bfC9b839542514a8DBC5aA0Ab34549
+   > block number:        10104271
+   > block timestamp:     1619305901
+   > account:             0x48dF73d1AaAb29241DDeC590B68FaFfb365Ec68E
+   > balance:             2.1243129103
+   > gas used:            3471304 (0x34f7c8)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.06942608 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.06942608 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.07251078 ETH

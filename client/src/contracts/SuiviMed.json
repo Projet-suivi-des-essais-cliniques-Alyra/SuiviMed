@@ -45509,8 +45509,8 @@
         }
       },
       "links": {},
-      "address": "0xfB27703B4Aa21Af31C4c7d85Ba266724ca33F4F6",
-      "transactionHash": "0x581746384c7a9847351907bed3b6ad08d4ea9ff5a37831ed29f1223c01ddf93c"
+      "address": "0x53A50c1009bfC9b839542514a8DBC5aA0Ab34549",
+      "transactionHash": "0xf9d85fcb96bfe89195ae9a3c002cd8c277a252fc8c2f18874f09b3f37c586d00"
     },
     "5777": {
       "events": {
@@ -45814,7 +45814,7 @@
     }
   },
   "schemaVersion": "3.3.4",
-  "updatedAt": "2021-04-24T19:28:55.167Z",
+  "updatedAt": "2021-04-24T23:13:32.347Z",
   "networkType": "ethereum",
   "devdoc": {
     "author": "Bruno Coupier, Samuel Edoumou, Gregory Bost",
