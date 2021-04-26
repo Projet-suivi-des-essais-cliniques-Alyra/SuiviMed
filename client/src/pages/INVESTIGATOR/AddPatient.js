@@ -69,9 +69,8 @@ class AddPatient extends Component {
     
     onButtonClick = async e => {
         e.preventDefault();
-        this.state.message = 'ok';
 
-        let patientID = this.state.data.index;
+        let projectID = this.state.data.index;
 
         console.log("EXCEL ROWS =", this.state.data);
         
@@ -88,13 +87,15 @@ class AddPatient extends Component {
             eventProjectID: receipt.events.patientAdded.returnValues[1]
         })
 
-        this.state.projectID = '';
-        this.state.patientAddress = '';
+        // this.state.projectID = '';
+        // this.state.patientAddress = '';
+        this.state.message = 'ok';
 
     }
 
     render() {
-    console.log("MESSAGE =", this.state.message);
+        let data = this.state.data;
+        console.log("MESSAGE =", this.state.message);
         return (
             <div>
                 <div>
@@ -110,16 +111,14 @@ class AddPatient extends Component {
                 </div>
 
                 <div className="data-collection">
+                    <div className="patient-file">
+                        <ReactFileReader fileTypes={[".csv",".pdf",".zip", ".xlsx"]} base64={true} handleFiles = {this.handleFiles}>
+                            <button className="positive ui button">
+                                Upload the patient data file to IPFS
+                            </button>
+                        </ReactFileReader>
+                    </div>
                     <form className = "ui form">
-                        <div className="patient-file">
-                            <ReactFileReader fileTypes={[".csv",".pdf",".zip", ".xlsx"]} base64={true} handleFiles = {this.handleFiles}>
-                                <button className="positive ui button">
-                                    Upload the patient data file into IPFS
-                                </button>
-                            </ReactFileReader>
-                        </div>
-
-
                         <div className ="field-addr">
                         <label>Patient address</label>
                             <input
@@ -131,28 +130,54 @@ class AddPatient extends Component {
                             />                            
                         </div>
 
+
+                        <div className ="patient-ID">
+                            <label>Project ID</label>
+                            <input
+                                type="text"
+                                name="id"
+                                value={this.state.projectID}
+                                required
+                                onChange = {e => this.setState({ projectID: e.target.value} )}
+                            />                            
+                        </div>
+
                         <button className="ui primary button" type="submit" onClick = {this.onButtonClick}>
                             Submit
                         </button>               
                     </form>                
                 </div>
 
-                {
-                    this.state.message === '' ?
-                        <p></p> 
-                    : 
-                        <div className="ui positive message protocol-sent">
-                            <i className="close icon"></i>
-                            <div className="header">
-                                Patient successfully added
-                            </div>
-                            <p>
-                                The patient <strong>{this.state.patientAddress}</strong> with ID 
-                                <strong>{this.state.eventPatientID}</strong> has been added to the project with ID
-                                <strong>{this.state.projectID}</strong>
-                                </p>
-                        </div>
-                }
+                <div className="table">
+                    <h2> Patient Data </h2>
+                    <table className="ui tablet stackable table">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th className="right aligned">Value</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                        {
+                            this.state.message !== ''
+                            ? 
+                                <div className="ui positive message protocol-sent">
+                                    <i className="close icon"></i>
+                                    <div className="header">
+                                        Data successfully sent
+                                    </div>
+                                </div>
+                            :
+                                Object.entries(data).map(([key, value]) => 
+                                    <tr key={key}>
+                                    <td>{key}</td>
+                                    <td className="right aligned">{value}</td>
+                                    </tr>
+                                )
+                        }         
+                        </tbody>
+                    </table>
+                </div>
 
             </div>
         );

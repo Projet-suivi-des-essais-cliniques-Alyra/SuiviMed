@@ -30,7 +30,8 @@ const HomeInvestigator = (props) => {
       let patientIDInProject=0;
       for (let i=0; i < props.patients.length; i++) {
         if (props.patients[i].projectID == _projectID) {
-          if(props.patients[i].investigatorAddress==String(currentAccount)) {   
+          if(props.patients[i].investigatorAddress==String(currentAccount) &&
+          props.patients[i].consent==true) {   
             patientsInProject.push(patientIDInProject);
           } 
           patientIDInProject++;      
@@ -57,7 +58,6 @@ const HomeInvestigator = (props) => {
     }
   }
    
-
   const onAlertButtonClick = async (event) => {
     event.preventDefault();
     console.log(termPatientAlert,termProtocolAlert)
@@ -110,7 +110,7 @@ const HomeInvestigator = (props) => {
               <th>Project ID</th>
               <th>Trial Master File (Protocol ID)</th>
               <th>Status</th>
-              <th>Patients ID</th>
+              <th>Patients Project IDs</th>
             </tr>
           </thead>
           <tbody>

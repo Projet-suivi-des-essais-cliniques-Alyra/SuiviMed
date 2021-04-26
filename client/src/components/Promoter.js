@@ -9,7 +9,6 @@ import PeoplePagePromoter from '../pages/PROMOTER/PeoplePagePromoter';
 class Promoter extends React.Component {
 
     render() {
-        
         return ( 
             <BrowserRouter>
             <Redirect to="/PROMOTER/" />
@@ -24,7 +23,7 @@ class Promoter extends React.Component {
                     <ProjectPage  contract={this.props.contract}/>
                 </Route>
                 <Route exact path="/PROMOTER/ReadDataPromoter">
-                    <ReadDataPromoter contract={this.props.contract}/>
+                <ReadDataPromoter contract={this.props.contract} patients={this.props.patients}/>
                 </Route>
                 <Route exact path="/PROMOTER/PeoplePagePromoter">
                     <PeoplePagePromoter  contract={this.props.contract}/>

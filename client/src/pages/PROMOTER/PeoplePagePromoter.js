@@ -28,9 +28,8 @@ const PeoplePagePromoter = (props) => {
         await props.contract.methods.addInvestigator(newInvestigatorAddress,projectID).send({from:currentAccount});
         }
     
-
     return (
-        <div>
+      <div>
             <Header />
         <div className="ReadDocuments">
             <MenuPromoter />
@@ -90,9 +89,10 @@ const PeoplePagePromoter = (props) => {
                 </div>  
             </div>
             </div>
-        </div>)}
+        </div>        
+        )}
 
-        </div>
+      </div>
     );
 };
 

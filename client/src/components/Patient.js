@@ -27,7 +27,7 @@ const Patient = (props) => {
                 type="text"
                 value={patientID}
                 onChange={e => setPatientID(e.target.value)}
-                placeholder="My Patient ID">
+                placeholder="My Patient Index">
                 </input>
             </div>
             </div>

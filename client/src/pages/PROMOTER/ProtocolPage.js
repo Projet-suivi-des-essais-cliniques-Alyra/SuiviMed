@@ -86,7 +86,6 @@ import "../../App.css";
             </div>
             <div className="editProtocol">
             <MenuPromoter />
-              Protocol Page
             </div>
 
             <h2 className="head1">Send the protocol to autorithies for validation</h2>

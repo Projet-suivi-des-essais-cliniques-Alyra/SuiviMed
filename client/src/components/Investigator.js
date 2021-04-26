@@ -26,7 +26,9 @@ class Investigator extends React.Component {
                     <CollectData  contract={this.props.contract}/>
                 </Route>
                 <Route exact path="/INVESTIGATOR/ReadDataInvestigator">
-                    <ReadDataInvestigator  contract={this.props.contract}/>
+                    <ReadDataInvestigator
+                      contract={this.props.contract}
+                      patients={this.props.patients}/>
                 </Route>
             </Switch>
             </BrowserRouter>

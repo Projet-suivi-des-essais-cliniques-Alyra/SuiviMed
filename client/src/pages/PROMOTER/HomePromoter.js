@@ -17,7 +17,7 @@ const HomePromoter = (props) => {
   
   const onResumeButtonClick = async (event) => {
     event.preventDefault();
-    console.log(termResume)
+    console.log(this.props.patients)
     await props.contract.methods.resumeAfterAlert(termResume).send({from:currentAccount});
   }
 

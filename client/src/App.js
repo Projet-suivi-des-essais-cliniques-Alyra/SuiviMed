@@ -102,7 +102,7 @@ class App extends Component {
         }
       });
     });
-    
+    // set the current role
     this.setState({role: await this.state.contract.methods.getRole(this.state.currentAccount).call()})
   }
 
@@ -111,6 +111,7 @@ class App extends Component {
     if (!this.state.web3 || this.state.role===undefined) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
+    //Promoters pages
     else if (this.state.role==="PROMOTERADMIN" || this.state.role==="PROMOTER") {
       return (
         <div className="ui container App">
@@ -118,8 +119,8 @@ class App extends Component {
             <AccountContext.Provider value={this.state.currentAccount}>
               <RoleContext.Provider value={this.state.role}>        
                 <Promoter
-                  // balance={this.state.balance}
                   contract={this.state.contract}
+                  patients={this.state.patients}
                 />
               </RoleContext.Provider>
             </AccountContext.Provider>
@@ -127,6 +128,7 @@ class App extends Component {
         </div>
       );
     }
+    //Authorities pages
     else if (this.state.role==="AUTHORITYADMIN" || this.state.role==="AUTHORITY") {
       return (
         <div className="ui container App">     
@@ -135,6 +137,7 @@ class App extends Component {
             <RoleContext.Provider value={this.state.role}>
               <Authority 
                 contract={this.state.contract}
+                patients={this.state.patients}
               />
             </RoleContext.Provider>
           </AccountContext.Provider>
@@ -142,6 +145,7 @@ class App extends Component {
         </div>
       );
     }
+    // Investigators pages
     else if (this.state.role==="INVESTIGATOR") {
       return (
         <div className="ui container App">   
@@ -159,6 +163,7 @@ class App extends Component {
         </div>
       );
     }
+    //Patients page
     else if (this.state.role==="PATIENT") {
       return (
         <div className="ui container App">     
@@ -172,6 +177,7 @@ class App extends Component {
         </div>
       );
     }
+    //Page for non registered
     else{ return <div className="ui container App">     
           <AccountContext.Provider value={this.state.currentAccount}>
             <RoleContext.Provider value={this.state.role}>

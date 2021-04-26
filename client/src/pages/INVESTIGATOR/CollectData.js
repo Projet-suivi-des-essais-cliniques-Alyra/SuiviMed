@@ -128,11 +128,8 @@ class CollectData extends Component {
                                 <div className="ui positive message protocol-sent">
                                     <i className="close icon"></i>
                                     <div className="header">
-                                        Patient successfully added
+                                        Data successfully sent
                                     </div>
-                                    <p>
-                                        The patient has been added
-                                    </p>
                                 </div>
                             :
                                 Object.entries(data).map(([key, value]) => 

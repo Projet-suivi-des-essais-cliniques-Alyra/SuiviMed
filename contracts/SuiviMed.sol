@@ -469,7 +469,7 @@ contract SuiviMed is AccessControl {
             return "INVESTIGATOR";
         } else if (hasRole(PATIENT, _address)) {
             return "PATIENT";
-        } else { return "NOROLE";}
+        } else { return "";}
     }
 
     /**

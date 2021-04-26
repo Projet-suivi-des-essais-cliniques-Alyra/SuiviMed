@@ -9,20 +9,43 @@ class ReadDataPromoter extends Component {
 
   static contextType = AccountContext;  
 
-  state = {
+  constructor (props) {
+    super(props);
+    this.state = {
+      projectID:'',
       patientID: '',
       cols: '',
       rows: '',
       base64data: '',
       message: ''
+    }
+    this.patientIDToPatientIndex = this.patientIDToPatientIndex.bind(this);
+  }
+
+  // determine patient Index using patient ID in the project 
+  patientIDToPatientIndex = (_patientID,_projectID) => {
+    if (this.props.patients!==null){  
+      let patientIDInProject=0;
+      for (let patientIndex=0; patientIndex < this.props.patients.length; patientIndex++) {       
+        if (this.props.patients[patientIndex].projectID == _projectID ) { 
+              
+              if (patientIDInProject ==_patientID) { 
+                console.log("patientIndex=",patientIndex);
+                return patientIndex;
+              }  
+            patientIDInProject++;
+        }         
+      }
+    }
   }
 
   onButtonClick = async e => {
       e.preventDefault();
       console.log("BUTTON RETUNS =", this.state.patientID);
 
-      const receipt = await this.props.contract.methods.getPatientDataCIDs(this.state.patientID)
-          .call({ from: this.contextType });
+      const receipt = await this.props.contract.methods
+      .getPatientDataCIDs(this.patientIDToPatientIndex(this.state.patientID,this.state.projectID))
+      .call({ from: this.contextType });
       
       const cid = receipt[0];
       const base64data = await FetchFromIPFS(cid, 'fpbyr4386v8hpxdruppijkt3v6wayxmi'); 
@@ -48,7 +71,7 @@ class ReadDataPromoter extends Component {
                 
 
           <div className="head-patient">
-              <h2 className="ui dividing header">Enter the patient ID to get its data</h2>
+              <h2 className="ui dividing header">Download Patient's Data</h2>
           </div>
 
           <form className = "ui form">
@@ -57,9 +80,20 @@ class ReadDataPromoter extends Component {
                   <input
                       type="text"
                       name="id"
-                      value={this.state.value}
+                      value={this.state.patientID}
                       required
                       onChange = {e => this.setState({ patientID: e.target.value} )}
+                  />                            
+              </div>
+
+              <div className ="patient-ID">
+                  <label>Project ID</label>
+                  <input
+                      type="text"
+                      name="id"
+                      value={this.state.projectID}
+                      required
+                      onChange = {e => this.setState({ projectID: e.target.value} )}
                   />                            
               </div>
 
