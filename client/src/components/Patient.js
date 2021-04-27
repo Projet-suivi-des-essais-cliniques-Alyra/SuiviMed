@@ -7,11 +7,46 @@ import "../styles/PeoplePage.css";
 const Patient = (props) => {
 
     const currentAccount = useContext(AccountContext);
-    const [patientID,setPatientID] = useState('');
+    const [patientIndexEntered,setPatientIndexEntered] = useState('');
+    // const [patientID,setPatientID] = useState('');
+    // const [patientIndex,setPatientIndex] = useState('');
+    // const [patientProject,setPatientProject] = useState('');
+
+
+    const patientInfoProject = (_projectID) =>{ 
+        let patientIDInProject=0;
+        if (props.patients!==null){ 
+            for (let i=0; i < props.patients.length; i++) {
+                if (props.patients[i].projectID == _projectID) {
+                    if (props.patients[i].patientAddress == String(currentAccount)) {
+                        return  <tr  key={props.patients[i].patientAddress}>                                     
+                                <td >{props.patients[i].projectID}</td>
+                                <td>{i}</td>
+                                <td>{patientIDInProject}</td>
+                                <td >{props.patients[i].consent ? "given" : "revoked"}</td>
+                                </tr>
+                        } 
+                    patientIDInProject++;      
+                }
+            }
+        }
+    }
+        
+
+    //select projects of investigator
+    const patientTab=[];
+    if (props.projects!==null){  
+        for (let i=0; i < props.projects.length; i++) {
+            patientTab.push(patientInfoProject(i));
+        }
+    }
+
+
+
 
     const onRevokeConsentButtonClick = async (event) => {
         event.preventDefault();
-        await props.contract.methods.revokeConsent(patientID).send({from:currentAccount});
+        await props.contract.methods.revokeConsent(patientIndexEntered).send({from:currentAccount});
     }
 
     return (
@@ -25,8 +60,8 @@ const Patient = (props) => {
             <div className="field">
                 <input
                 type="text"
-                value={patientID}
-                onChange={e => setPatientID(e.target.value)}
+                value={patientIndexEntered}
+                onChange={e => setPatientIndexEntered(e.target.value)}
                 placeholder="My Patient Index">
                 </input>
             </div>
@@ -39,6 +74,21 @@ const Patient = (props) => {
                 </div>  
             </div>
             </div>
+        </div>
+        <div>
+        <table className="ui celled table">
+          <thead>
+            <tr>
+              <th>Project ID</th>
+              <th>Patient Index (in bTrial)</th>
+              <th>Patient ID (in Project)</th>
+              <th>Consent</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.patients !== undefined && patientTab}
+          </tbody>
+        </table>
         </div>
 
         </div>

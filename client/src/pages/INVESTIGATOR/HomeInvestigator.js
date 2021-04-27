@@ -23,8 +23,8 @@ const HomeInvestigator = (props) => {
     else{return null;}
   }
 
-  // determine la liste des patients de l'investigator par ID dans le project
-  const patientIDsOfInvestigatorInProject = (_projectID) =>{
+  // determine la liste des patients actifs de l'investigator par ID dans le project
+  const consentedPatientsIDsOfInvestigatorInProject = (_projectID) =>{
     if (props.patients!==null){  
       let patientsInProject=[];
       let patientIDInProject=0;
@@ -32,6 +32,24 @@ const HomeInvestigator = (props) => {
         if (props.patients[i].projectID == _projectID) {
           if(props.patients[i].investigatorAddress==String(currentAccount) &&
           props.patients[i].consent==true) {   
+            patientsInProject.push(patientIDInProject);
+          } 
+          patientIDInProject++;      
+        }
+      }
+      return patientsInProject.toString();
+    }
+  }
+
+  // determine la liste des patients revoqués de l'investigator par ID dans le project
+  const revokedPatientsIDsOfInvestigatorInProject = (_projectID) =>{
+    if (props.patients!==null){  
+      let patientsInProject=[];
+      let patientIDInProject=0;
+      for (let i=0; i < props.patients.length; i++) {
+        if (props.patients[i].projectID == _projectID) {
+          if(props.patients[i].investigatorAddress==String(currentAccount) &&
+          props.patients[i].consent==false) {   
             patientsInProject.push(patientIDInProject);
           } 
           patientIDInProject++;      
@@ -51,7 +69,8 @@ const HomeInvestigator = (props) => {
               <td >{i}</td>
               <td>{props.projects[i].protocolID}</td>
               <td >{renderStatus(props.projects[i].status)}</td>
-              <td>{patientIDsOfInvestigatorInProject(i)}</td>
+              <td>{consentedPatientsIDsOfInvestigatorInProject(i)}</td>
+              <td style={{'color':'red'}}>{revokedPatientsIDsOfInvestigatorInProject(i)}</td>
           </tr>
         )
       }
@@ -110,7 +129,8 @@ const HomeInvestigator = (props) => {
               <th>Project ID</th>
               <th>Trial Master File (Protocol ID)</th>
               <th>Status</th>
-              <th>Patients Project IDs</th>
+              <th>Patients Project IDs (consent given)</th>
+              <th>Patients Project IDs (consent revoked)</th>
             </tr>
           </thead>
           <tbody>

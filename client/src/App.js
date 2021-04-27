@@ -171,6 +171,8 @@ class App extends Component {
             <RoleContext.Provider value={this.state.role}>
               <Patient
                 contract={this.state.contract}
+                projects={this.state.projects}
+                patients={this.state.patients}
               />
             </RoleContext.Provider>
           </AccountContext.Provider>
