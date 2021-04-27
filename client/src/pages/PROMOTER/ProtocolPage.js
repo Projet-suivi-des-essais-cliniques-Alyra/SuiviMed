@@ -105,10 +105,10 @@ import "../../App.css";
               <div className="send-protocol">
                 <div className="ui warning message protocol-warning">
                   <div className="header">
-                    Your are about to send the protocol in file
+                    Your are about to send the protocol file
                     {this.state.filename} for validation.
                   </div>
-                  Click the button bellow to send.
+                  Click the button below to send.
                 </div>
                 <p className = "protocol-send-btn">
                   <button className="ui green button" onClick = {this.onButtonClick}>
