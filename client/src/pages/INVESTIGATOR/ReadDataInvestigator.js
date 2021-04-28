@@ -14,10 +14,8 @@ class ReadDataInvestigator extends Component {
     this.state = {
       projectID:'',
       patientID: '',
-      cols: '',
-      rows: '',
+      fileID:'',
       base64data: '',
-      message: ''
     }
     this.patientIDToPatientIndex = this.patientIDToPatientIndex.bind(this);
 }
@@ -41,21 +39,30 @@ class ReadDataInvestigator extends Component {
   
   onButtonClick = async e => {
       e.preventDefault();
-      console.log("BUTTON RETUNS =", this.state.patientID);
-
+      console.log("BUTTON RETURNS =", this.state.patientID,this.state.projectID);
+      try{
       const receipt = await this.props.contract.methods
       .getPatientDataCIDs(this.patientIDToPatientIndex(this.state.patientID,this.state.projectID))
-      .call({ from: this.contextType });
+      .call({ from: this.contextType })
+      console.log("receipt=",receipt)
       
-      const cid = receipt[0];
+      let fileID = this.state.fileID
+      console.log("fileID=",fileID)
+      const cid = receipt[fileID];
       const base64data = await FetchFromIPFS(cid, 'fpbyr4386v8hpxdruppijkt3v6wayxmi'); 
       this.setState({
-          message: 'ok',
           base64data: base64data
       });
 
       console.log("RECEIPT =", cid);
       console.log("ENCODED DATA =", base64data);
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `failed to download, Patient's Data are not available.`,
+      );
+      console.error(error);
+    }
   }
 
   render() {
@@ -72,20 +79,10 @@ class ReadDataInvestigator extends Component {
                 
 
           <div className="head-patient">
-              <h2 className="ui dividing header">Download Patient's Data</h2>
+              <h2 className="ui dividing header">Read Patient's Data</h2>
           </div>
 
           <form className = "ui form">
-              <div className ="patient-ID">
-                  <label>Patient ID</label>
-                  <input
-                      type="text"
-                      name="id"
-                      value={this.state.patientID}
-                      required
-                      onChange = {e => this.setState({ patientID: e.target.value} )}
-                  />                            
-              </div>
               
               <div className ="patient-ID">
                   <label>Project ID</label>
@@ -98,28 +95,37 @@ class ReadDataInvestigator extends Component {
                   />                            
               </div>
 
+              <div className ="patient-ID">
+                  <label>Patient ID</label>
+                  <input
+                      type="text"
+                      name="id"
+                      value={this.state.patientID}
+                      required
+                      onChange = {e => this.setState({ patientID: e.target.value} )}
+                  />                            
+              </div>
+
+              <div className ="patient-ID">
+                  <label>File ID</label>
+                  <input
+                      type="text"
+                      name="id"
+                      value={this.state.fileID}
+                      required
+                      onChange = {e => this.setState({ fileID: e.target.value} )}
+                  />                            
+              </div>
+
               <button className="ui primary button" type="submit" onClick = {this.onButtonClick}>
                   Submit
               </button>
           </form>
 
-          {
-              this.state.message === ''
-              ?
-                  console.log('')
-              :
-              <div className="ui positive message protocol-sent">
-                  <i className="close icon"></i>
-                  <div className="header">
-                      File successfully downloaded
-                  </div>
-                  <p>
-                      The file containing the patient data has been downloaded and store on your computer.
-                  </p>
-              </div>
-          }
-          
-          <embed src={this.state.base64data} type="application/pdf" width="50%" height="850px" scrolling = "no"></embed>
+          <div className="filereader">
+              <embed src={this.state.base64data}  type="application/pdf" width="50%" height="850px" scrolling = "no"></embed>
+          </div>
+         
         </div>
       )
   }

@@ -120,6 +120,7 @@ class App extends Component {
               <RoleContext.Provider value={this.state.role}>        
                 <Promoter
                   contract={this.state.contract}
+                  projects={this.state.projects}
                   patients={this.state.patients}
                 />
               </RoleContext.Provider>
@@ -137,6 +138,7 @@ class App extends Component {
             <RoleContext.Provider value={this.state.role}>
               <Authority 
                 contract={this.state.contract}
+                projects={this.state.projects}
                 patients={this.state.patients}
               />
             </RoleContext.Provider>

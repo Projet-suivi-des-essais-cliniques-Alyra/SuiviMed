@@ -518,4 +518,10 @@ contract SuiviMed is AccessControl {
         return patients;
     }
 
+    /**
+     * @notice This function returns true if protocol was validated by caller
+     */
+    function validatedByAuthority(uint _protocolID) public view returns (bool){
+        return protocolValidatedByAuthority[_protocolID]==msg.sender;
+    }
 }

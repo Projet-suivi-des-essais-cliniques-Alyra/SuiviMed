@@ -14,19 +14,26 @@ class Promoter extends React.Component {
             <Redirect to="/PROMOTER/" />
             <Switch>
                 <Route exact path="/PROMOTER/">
-                    <HomePromoter contract={this.props.contract}/>
+                    <HomePromoter
+                        contract={this.props.contract}
+                        projects={this.props.projects}
+                        patients={this.props.patients}/>
                 </Route> 
                 <Route exact path="/PROMOTER/ProtocolPage">
                     <ProtocolPage  contract={this.props.contract}/>
                 </Route>
                 <Route exact path="/PROMOTER/ProjectPage">
-                    <ProjectPage  contract={this.props.contract}/>
+                    <ProjectPage
+                        contract={this.props.contract}/>
                 </Route>
                 <Route exact path="/PROMOTER/ReadDataPromoter">
-                <ReadDataPromoter contract={this.props.contract} patients={this.props.patients}/>
+                    <ReadDataPromoter
+                        contract={this.props.contract}
+                        patients={this.props.patients}/>
                 </Route>
                 <Route exact path="/PROMOTER/PeoplePagePromoter">
-                    <PeoplePagePromoter  contract={this.props.contract}/>
+                    <PeoplePagePromoter
+                        contract={this.props.contract}/>
                 </Route>
             </Switch>
             </BrowserRouter>
@@ -37,66 +44,3 @@ class Promoter extends React.Component {
 
 export default Promoter;
 
-
-
-
-
-
-
-
-
-
-
-
-//  <div>
-//     <Header
-//         role={this.props.role}
-//         account={this.props.account}
-//     />
-
-//     <h1>Protocol file description</h1>
-//     <h4> {this.state.protocoleCID} </h4>
-//     <textarea
-//         rows="6"
-//         cols="60"
-//         onChange={e => this.setState({ protocolDescription: e.target.value })}
-//     />
-
-//     <h1>Confidential treatment list</h1>
-//     <h4> {this.state.listCID} </h4>
-//     <textarea
-//         rows="6"
-//         cols="60"
-//         onChange={e => this.setState({ protocolTreatmentList: e.target.value })}
-//     /> 
-    
-//     <p></p>
-
-//     <p>
-//         <button className="positive ui button" onClick={this.onButtontreatmentListClick}>
-//             Encrypt and upload to IPFS
-//         </button>
-//     </p>
-
-//     <h2> Protocols Data fetched from Ethereum Blockchain </h2>
-//     <div className="table">
-//         <table className="ui tablet stackable table">
-//         <thead>
-//             <tr>
-//                 <th>Protocol type</th>
-//                 <th className="right aligned">Data</th>
-//             </tr>
-//         </thead>
-//             <tbody>
-//             {
-//             Object.entries(data).map(([key, value]) => 
-//                 <tr key={key}>
-//                 <td>{key}</td>
-//                 <td className="right aligned">{value}</td>
-//                 </tr>
-//             )}         
-//         </tbody>
-//         </table>
-//     </div>
-
-// </div>

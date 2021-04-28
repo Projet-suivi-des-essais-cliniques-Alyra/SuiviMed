@@ -80,7 +80,7 @@ const Patient = (props) => {
           <thead>
             <tr>
               <th>Project ID</th>
-              <th>Patient Index (in bTrial)</th>
+              <th>Patient Index</th>
               <th>Patient ID (in Project)</th>
               <th>Consent</th>
             </tr>

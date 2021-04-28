@@ -4,8 +4,72 @@ https://suivimed.herokuapp.com/
 # ropsten (sans updateProtocol() et consent())
 
 # Latest version of smart contrat with patients and all roles:
-https://ropsten.etherscan.io/address/0x53fb646f81818625678099f05ad223de27beaec7
+https://ropsten.etherscan.io/address/0x287f30c0e6ecef04b4c257dbc2ad986d9a61494d
 
+Starting migrations...
+======================
+> Network name:    'ropsten'
+> Network id:      3
+> Block gas limit: 8000000 (0x7a1200)
+
+
+1_initial_migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > transaction hash:    0xf10acbd084e0d40fd457461c35043c11bbec0f7f3b73c970efe3df9241bd09c0
+   > Blocks: 2            Seconds: 20
+   > contract address:    0xE60C6999A94cEf67D1AB80e99c8011200667e897
+   > block number:        10132443
+   > block timestamp:     1619633119
+   > account:             0x48dF73d1AaAb29241DDeC590B68FaFfb365Ec68E
+   > balance:             1.8712391263
+   > gas used:            154235 (0x25a7b)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.0030847 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:           0.0030847 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Replacing 'SuiviMed'
+   --------------------
+   > transaction hash:    0x7dc02aefe34f1fd38041a65b83d440e64b25be098441aa05c041ce65fcf7f98c
+   > Blocks: 1            Seconds: 64
+   > contract address:    0x287f30c0E6EcEf04B4C257dBC2AD986D9A61494D
+   > block number:        10132447
+   > block timestamp:     1619633215
+   > account:             0x48dF73d1AaAb29241DDeC590B68FaFfb365Ec68E
+   > balance:             1.8007896263
+   > gas used:            3476784 (0x350d30)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.06953568 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.06953568 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.07262038 ETH
+
+
+# Previous deployments:
+
+https://ropsten.etherscan.io/address/0x53fb646f81818625678099f05ad223de27beaec7
 
 Compiling your contracts...
 ===========================
@@ -72,16 +136,6 @@ Summary
 =======
 > Total deployments:   2
 > Final cost:          0.07235678 ETH
-
-
-
-
-
-
-# Previous deployments:
-
-
-
 
 
 

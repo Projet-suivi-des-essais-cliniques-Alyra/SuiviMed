@@ -14,39 +14,56 @@ import "../../App.css";
     static contextType = AccountContext;
 
     state = {
-      protocolCID: '',
+      descriptionCID: '',
+      treatmentListCID:'',
       base64data: '',
       filename: '',
-      data: '',
+      base64dataList: '',
+      filenameList: '',
       warningMsg: '',
       eventAddress: '',
-      eventID: ''
+      eventID: '',
+      descDone:false,
+      currentfile:''
     }
 
-    handleFiles = async files => {
+    handleFilesDesc = async files => {
       // encode the file to base64 and save it into state
       this.setState({
           filename: files.fileList[0].name,
           base64data: files.base64,
+          descDone:true,
+          currentfile:files.base64
+      })
+    }
+    handleFilesList = async files => {
+      // encode the file to base64 and save it into state
+      this.setState({
+          filenameList: files.fileList[0].name,
+          base64dataList: files.base64,
+          currentfile:files.base64,
           warningMsg: files.fileList[0].name,
           eventAddress: '',
           eventID: ''
       })
-  }
+    }
+
+
 
   onButtonClick = async () => {
     this.setState({ warningMsg: '' });
 
     // send data to ipfs
-    let encryptedData = EncryptData(this.state.base64data, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+    let encryptedDescriptionData = EncryptData(this.state.base64data, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+    let encryptedTreatmentListData = EncryptData(this.state.base64dataList, 16, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');
+    let descriptionCID = await SendToIPFS(encryptedDescriptionData);
+    let treatmentListCID = await SendToIPFS(encryptedTreatmentListData);
+    // this.setState({ descriptionCID: descriptionCID, treatmentListCID:treatmentListCID });
+    console.log("descriptionCID =", this.state.descriptionCID);
+    console.log("treatmentListCID =", this.state.treatmentListCID);
 
-    let cid = await SendToIPFS(encryptedData);
-    this.setState({ protocoleCID: cid });
-    console.log("CID FROM CODE =", this.state.protocoleCID);
-
-
-    // send cids to ethereum Blockchain  
-    const receipt = await this.props.contract.methods.createProtocol(cid, cid).send({ from: this.context });
+    // send CIDs to Blockchain  
+    const receipt = await this.props.contract.methods.createProtocol(descriptionCID, treatmentListCID).send({ from: this.context });
     console.log("RECEIPT =", receipt.events);
 
     // handling events
@@ -54,17 +71,7 @@ import "../../App.css";
     let id = receipt.events.protocolCreation.returnValues[1];
     /* console.log("EVENT ADRESS =", receipt.events.protocolCreation.returnValues[0]);
     console.log("EVENT ID =", receipt.events.protocolCreation.returnValues[1]); */
-    console.log(`The adress ${addr} has registered the protocol with id ${id}`);
-
-    // Fetch cids from blockchain
-    let cids = await this.props.contract.methods.getProtocolCIDs(id).call({ from: this.context });
-    console.log("cids from Ethereum =", cids);
-
-    
-    // Fetch data from ipfs
-    let data = FetchFromIPFS(this.state.protocoleCID, 'fpbyr4386v8hpxdruppijkt3v6wayxmi');    
-
-    this.setState({ data: await data });
+    console.log(`The address ${addr} has registered the protocol with id ${id}`);
 
     // store event data on state
     this.setState({
@@ -88,34 +95,46 @@ import "../../App.css";
             <MenuPromoter />
             </div>
 
-            <h2 className="head1">Send the protocol to autorithies for validation</h2>
+            <h2 className="head1">Send Protocol Files for validation</h2>
 
             <div className = "protocol-btn">
-              <ReactFileReader fileTypes={[".csv",".pdf",".zip"]} base64={true} handleFiles = {this.handleFiles}>
-                
+              <ReactFileReader fileTypes={[".csv",".pdf",".zip"]} base64={true}  handleFiles = {this.handleFilesDesc}>
                 <button className="ui brown button">
-                  Select the protocol file
+                  Select the Protocol Description File
                 </button>
               </ReactFileReader>
+              {this.state.filename}
             </div>
-            {this.state.filename}
+
+            {!this.state.descDone ? 
+            <p></p>
+            : 
+            <div className = "protocol-btn">
+              <ReactFileReader fileTypes={[".csv",".pdf",".zip"]} base64={true}  handleFiles = {this.handleFilesList}>
+                <button className="ui brown button">
+                  Select the Protocol Treatments List File
+                </button>
+              </ReactFileReader>
+              {this.state.filenameList}
+            </div>
+            }
 
             {
               warning === '' ? <p></p> : 
               <div className="send-protocol">
                 <div className="ui warning message protocol-warning">
                   <div className="header">
-                    Your are about to send the protocol file
-                    {this.state.filename} for validation.
+                    <p>You are about to send these protocol files:<br></br>
+                    {this.state.filename}, <br></br>
+                    {this.state.filenameList}</p>
                   </div>
                   Click the button below to send.
                 </div>
                 <p className = "protocol-send-btn">
                   <button className="ui green button" onClick = {this.onButtonClick}>
-                    send
+                    Send
                   </button>
-                </p>
-                <embed src={this.state.base64data}  type="application/pdf" width="50%" height="850px" scrolling = "no"></embed>
+                </p>    
               </div>
             }
 
@@ -126,10 +145,13 @@ import "../../App.css";
                 <div className="header">
                   Protocol sent successfully for validation
                 </div>
-                <p>Your protocol id is <strong>{eID}</strong>.</p>
+                <p>Your protocol ID is <strong>{eID}</strong>.</p>
               </div>
             }
-        </div>
+
+        
+         {/* <embed src={this.state.currentfile}  type="application/pdf" width="50%" height="850px" scrolling = "no"></embed> */}
+      </div>
     );
   }
 }

@@ -14,7 +14,11 @@ class Authority extends React.Component {
             <Redirect to="/AUTHORITY/" />
             <Switch>
                 <Route exact path="/AUTHORITY/">
-                    <HomeAuthority contract={this.props.contract}/>
+                    <HomeAuthority
+                        contract={this.props.contract}
+                        projects={this.props.projects}
+                        patients={this.props.patients}
+                    />
                 </Route>
                 <Route exact path="/AUTHORITY/ReadDataAuthority">
                 <ReadDataAuthority

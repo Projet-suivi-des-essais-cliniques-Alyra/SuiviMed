@@ -14,6 +14,73 @@ const HomePromoter = (props) => {
 
   const [termAgreement,setTermAgreement] = useState('');
   const [termResume,setTermResume] = useState('');
+
+  const renderStatus = (p) => {
+    if(p === '0'){
+       return "ACTIVE";
+    }
+    else if (p ==='1') {
+      return "SUSPENDED";
+    } 
+    else if (p === '2') {
+        return "CLOSED";
+    }
+    else{return null;}
+  }
+
+  // determine la liste des patients actifs dans le project
+  const consentedPatientsIDsOfInvestigatorInProject = (_projectID) =>{
+    if (props.patients!==null){  
+      let patientsInProject=[];
+      let patientIDInProject=0;
+      for (let i=0; i < props.patients.length; i++) {
+        if (props.patients[i].projectID == _projectID) {
+          if(props.patients[i].consent==true) {   
+            patientsInProject.push(patientIDInProject);
+          } 
+          patientIDInProject++;      
+        }
+      }
+      return patientsInProject.toString();
+    }
+  }
+
+  // determine la liste des patients revoqués dans le project
+  const revokedPatientsIDsOfInvestigatorInProject = (_projectID) =>{
+    if (props.patients!==null){  
+      let patientsInProject=[];
+      let patientIDInProject=0;
+      for (let i=0; i < props.patients.length; i++) {
+        if (props.patients[i].projectID == _projectID) {
+          if(props.patients[i].consent==false) {   
+            patientsInProject.push(patientIDInProject);
+          } 
+          patientIDInProject++;      
+        }
+      }
+      return patientsInProject.toString();
+    }
+  }
+
+  //select projects of promoter
+  const projectsTab=[];
+  if (props.projects!==null){  
+    for (let i=0; i < props.projects.length; i++) {
+      if (props.projects[i].promoterAddress==String(currentAccount)){   
+        projectsTab.push(
+          <tr  key={props.projects[i].protocolID}>                                     
+              <td >{i}</td>
+              <td>{props.projects[i].protocolID}</td>
+              <td >{renderStatus(props.projects[i].status)}</td>
+              <td>{props.projects[i].investigatorsAddresses.
+              map(investigator => investigator.substring(0,4).concat(" "))}</td>
+              <td>{consentedPatientsIDsOfInvestigatorInProject(i)}</td>
+              <td style={{'color':'red'}}>{revokedPatientsIDsOfInvestigatorInProject(i)}</td>
+          </tr>
+        )
+      }
+    }
+  }
   
   const onResumeButtonClick = async (event) => {
     event.preventDefault();
@@ -77,27 +144,53 @@ const HomePromoter = (props) => {
               </div>
             </div>
           </div>
-        <div>
-        <table className="ui celled table">
-          <thead>
-            <tr>
-              <th>Protocol ID</th>
-              <th>Validation</th>
-              <th>Alert</th>
-            </tr>
-          </thead>
-          <tbody>
-            {protocolsContext !== undefined && 
-            protocolsContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
-                <tr  key={protocol.date}>                                     
-                <td >{id}</td>
-                <td >{protocol.validated ? "done" : "pending"}</td>
-                <td >{protocol.alertOn ? <i class ="attention icon"></i> :"None"}</td>
-                </tr>)
-            }   
-          </tbody>
-        </table>
-      </div>
+          
+          
+          <h2 className="ui dividing header">Protocols</h2>
+         
+
+          <div>
+          <table className="ui celled table">
+            <thead>
+              <tr>
+                <th>Trial Master File (Protocol ID)</th>
+                <th>Validation</th>
+                <th>Alert</th>
+              </tr>
+            </thead>
+            <tbody>
+              {protocolsContext !== undefined && 
+              protocolsContext.map((protocol,id) => //(validated, alertOn, date, promoterAddress, descriptionCID, treatmentsListCID) 
+                  <tr  key={protocol.date}>                                     
+                  <td >{id}</td>
+                  <td >{protocol.validated ? <i class="large green checkmark icon"></i> : <i class="hourglass outline icon"></i>}</td>
+                  <td >{protocol.alertOn ? <i class ="attention icon"></i> :"None"}</td>
+                  </tr>)
+              }   
+            </tbody>
+          </table>
+        </div>
+
+        <h2 className="ui dividing header">Projects</h2>
+
+          <div>
+          <table className="ui celled table">
+            <thead>
+              <tr>
+                <th>Project ID</th>
+                <th>Trial Master File (Protocol ID)</th>
+                <th>Status</th>
+                <th>Investigators</th>
+                <th>Patients Project IDs (consent given)</th>
+                <th>Patients Project IDs (consent revoked)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {props.projects !== undefined && projectsTab}
+            </tbody>
+          </table>
+          </div>
+        
     
     </div>
   );
