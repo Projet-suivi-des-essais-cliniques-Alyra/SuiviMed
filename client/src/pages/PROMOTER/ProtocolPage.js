@@ -59,8 +59,8 @@ import "../../App.css";
     let descriptionCID = await SendToIPFS(encryptedDescriptionData);
     let treatmentListCID = await SendToIPFS(encryptedTreatmentListData);
     // this.setState({ descriptionCID: descriptionCID, treatmentListCID:treatmentListCID });
-    console.log("descriptionCID =", this.state.descriptionCID);
-    console.log("treatmentListCID =", this.state.treatmentListCID);
+    console.log("descriptionCID =", descriptionCID);
+    console.log("treatmentListCID =", treatmentListCID);
 
     // send CIDs to Blockchain  
     const receipt = await this.props.contract.methods.createProtocol(descriptionCID, treatmentListCID).send({ from: this.context });
