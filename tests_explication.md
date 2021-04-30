@@ -16,3 +16,29 @@ et de l'autorité supervisant le projet. Une fois l'accord obtenu, on peut véri
 
 - le cinquième test est dédié à la vérification du bon fonctionnement du recueil du consentement d'un patient lors de son recrutement et de la fonction revokeConsent() qui lui permet de révoquer son consentement. Dans ce scénario, un patient qui vient d'etre ajouté révoque son consentement. On vérifie que le système a bien enregistré sa révocation et que son investigateur ne peut plus ajouter de données médicales à son dossier.
 
+
+# Verification des tests
+
+(base) bruno@bruno-Yoga:~/Documents/Alyra/projet final/BC_et_essais_cliniques/SuiviMed$ truffle test ./test/testsSuiviMed.js --network Ganache
+Using network 'Ganache'.
+
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/SuiviMed.sol
+> Artifacts written to /tmp/test--13320-zVQwRFiivggD
+> Compiled successfully using:
+   - solc: 0.8.0+commit.c7dfd78e.Emscripten.clang
+
+
+
+  Contract: SuiviMed
+    ✓ Test verifies proper access to addPromoter function (1448ms)
+    ✓ Test verifies proper functionning of addPatient function (1066ms)
+    ✓ Scenario verifying the functionning of alert on protocol (1267ms)
+    ✓ Scenario verifying consents of patients is revoked when protocol is updated (690ms)
+    ✓ Scenario verifying data of patients, whose consent were revoked, cannot be collected anymore (433ms)
+
+
+  5 passing (7s)
+

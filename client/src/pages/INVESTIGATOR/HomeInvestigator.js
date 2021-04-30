@@ -8,8 +8,26 @@ const HomeInvestigator = (props) => {
   //Contexts and Hooks
   const currentAccount = useContext(AccountContext);
   const [termPatientAlert,setTermPatientAlert] = useState('');
-  const [termProtocolAlert,setTermProtocolAlert] = useState('');
+  const [termProjectAlert,setTermProjectAlert] = useState('');
 
+
+  // determine patient Index using patient ID in the project 
+  const patientIDToPatientIndex = (_patientID,_projectID) => {
+    if (props.patients!==null){  
+      let patientIDInProject=0;
+      for (let patientIndex=0; patientIndex < props.patients.length; patientIndex++) {       
+        if (props.patients[patientIndex].projectID == _projectID ) { 
+              
+              if (patientIDInProject ==_patientID) { 
+                console.log("patientIndex=",patientIndex);
+                return patientIndex;
+              }  
+            patientIDInProject++;
+        }         
+      }
+    }
+  }
+  
   const renderStatus = (p) => {
     if(p === '0'){
        return "ACTIVE";
@@ -79,8 +97,12 @@ const HomeInvestigator = (props) => {
    
   const onAlertButtonClick = async (event) => {
     event.preventDefault();
-    console.log(termPatientAlert,termProtocolAlert)
-    await props.contract.methods.setAlertOn(termPatientAlert,termProtocolAlert).send({from:currentAccount});
+    console.log(termPatientAlert,termProjectAlert)
+    console.log(patientIDToPatientIndex(termPatientAlert,termProjectAlert))
+    console.log(props.projects[termProjectAlert].protocolID)
+    await props.contract.methods
+    .setAlertOn(patientIDToPatientIndex(termPatientAlert,termProjectAlert),props.projects[termProjectAlert].protocolID)
+    .send({from:currentAccount});
   }
 
   return (
@@ -107,9 +129,9 @@ const HomeInvestigator = (props) => {
           <div className="field">
             <input
               type="text"
-              value={termProtocolAlert}
-              onChange={e => setTermProtocolAlert(e.target.value)}
-              placeholder="Protocol ID">
+              value={termProjectAlert}
+              onChange={e => setTermProjectAlert(e.target.value)}
+              placeholder="Project ID">
             </input>
           </div>
             </div>
